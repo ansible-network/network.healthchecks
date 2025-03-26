@@ -1,0 +1,10 @@
+---
+- name: Execute CPU healthcheck command on Cisco IOS XR device
+  cisco.iosxr.iosxr_command:
+    commands:
+      - "{{ cpu_healthcheck_command }}"
+  register: cpu_check
+
+- name: Display CPU check output
+  ansible.builtin.debug:
+    var: cpu_check.stdout_lines

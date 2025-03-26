@@ -1,0 +1,5 @@
+---
+# defaults file for network.healthchecks.cpu
+
+# Command to be executed on the IOS-XR device for CPU health check.
+cpu_healthcheck_command: "show processes cpu"
