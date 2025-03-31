@@ -1,0 +1,26 @@
+---
+- name: Execute uptime check on Cisco IOS XR device
+  when: ansible_network_os == "iosxr"
+  cisco.iosxr.iosxr_command:
+    commands:
+      - "{{ uptime_iosxr_command }}"
+  register: uptime_output
+
+- name: Execute uptime check on Cisco NX-OS device
+  when: ansible_network_os == "nxos"
+  cisco.nxos.nxos_command:
+    commands:
+      - "{{ uptime_nxos_command }}"
+  register: uptime_output
+
+- name: Execute uptime check on Arista EOS device
+  when: ansible_network_os == "eos"
+  arista.eos.eos_command:
+    commands:
+      - "{{ uptime_eos_command }}"
+  register: uptime_output
+
+- name: Display uptime output
+  when: uptime_output is defined
+  ansible.builtin.debug:
+    var: uptime_output.stdout_lines

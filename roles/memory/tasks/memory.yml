@@ -1,0 +1,14 @@
+---
+- name: Execute memory check on Cisco IOS XR device
+  when: ansible_network_os == "iosxr"
+  cisco.iosxr.iosxr_command:
+    commands:
+      - "{{ memory_healthcheck_command }}"
+  register: memory_check
+
+- name: Execute memory check on Cisco IOS XE device
+  when: ansible_network_os == "ios"
+  cisco.ios.ios_command:
+    commands:
+      - "{{ memory_healthcheck_command }}"
+  register: memory_check

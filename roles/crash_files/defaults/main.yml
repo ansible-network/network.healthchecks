@@ -1,0 +1,14 @@
+---
+# defaults file for network.healthchecks.crash_files
+
+# Cisco IOS XR commands for unexpected crash files
+crash_files_iosxr_logging_command: "show logging | include crash"
+crash_files_iosxr_crashinfo_command: "show crashinfo:"
+
+# Cisco NX-OS commands for unexpected crash files
+crash_files_nxos_commands:
+  - "show cores"
+  - "dir bootflash:core"
+
+# Arista EOS command for unexpected crash files
+crash_files_eos_command: "show tech-support | include crash"

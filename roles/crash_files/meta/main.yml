@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Ruchi Pakhle (@Ruchip16)
+  description: >
+    This role performs an unexpected crash file check on network devices.
+    For Cisco IOS XR devices, it reviews system logs and crashinfo file system.
+    For Cisco NX-OS, it lists cores and crash files.
+    For Arista EOS, it extracts crash information from tech-support output.
+  license: Apache-2.0
+  min_ansible_version: ">=2.15.0"
+  platforms:
+    - name: Cisco IOS XR
+      versions:
+        - ">= 6.0"
+    - name: Cisco NX-OS
+      versions:
+        - ">= 9.0"
+    - name: Arista EOS
+      versions:
+        - ">= 4.20"
+dependencies: []

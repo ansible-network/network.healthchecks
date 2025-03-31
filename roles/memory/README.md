@@ -20,7 +20,7 @@ The `network.healthchecks.memory` role allows tracking of memory consumption to 
       vars:
         warning_threshold: 60
         critical_threshold: 90
-
+```
 ## License
 
 GNU General Public License v3.0 or later.
