@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: Your Name
+  author: Ruchi Pakhle (@Ruchip16)
   description: >
     This role performs a CPU health check on Cisco IOS XR devices by executing the
     "show processes cpu" command and returning the output.

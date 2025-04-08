@@ -1,10 +1,72 @@
 ---
 - name: Execute CPU healthcheck command on Cisco IOS XR device
+  when: ansible_network_os.split('.')[-1] == 'iosxr'
   cisco.iosxr.iosxr_command:
     commands:
-      - "{{ cpu_healthcheck_command }}"
-  register: cpu_check
+      - "show processes cpu"
+  register: cpu_check_iosxr
 
-- name: Display CPU check output
+- name: Execute CPU healthcheck command on Cisco NX-OS device
+  when: ansible_network_os.split('.')[-1] == 'nxos'
+  cisco.nxos.nxos_command:
+    commands:
+      - "show processes cpu"
+  register: cpu_check_nxos
+
+- name: Execute CPU healthcheck command on Cisco IOS/IOSXE device
+  when: ansible_network_os.split('.')[-1] in ['ios', 'iosxe']
+  cisco.ios.ios_command:
+    commands:
+      - "show processes cpu"
+  register: cpu_check_ios
+
+- name: Execute CPU healthcheck command on Arista EOS device
+  when: ansible_network_os.split('.')[-1] == 'eos'
+  arista.eos.eos_command:
+    commands:
+      - "show processes cpu"
+  register: cpu_check_eos
+
+# Combine the results from the different OS-specific commands into a common variable.
+- name: Set common CPU check result
+  set_fact:
+    cpu_check: >-
+      {% if cpu_check_iosxr is defined %}
+        {{ cpu_check_iosxr.stdout }}
+      {% elif cpu_check_nxos is defined %}
+        {{ cpu_check_nxos.stdout }}
+      {% elif cpu_check_ios is defined %}
+        {{ cpu_check_ios.stdout }}
+      {% elif cpu_check_eos is defined %}
+        {{ cpu_check_eos.stdout }}
+      {% else %}
+        []
+      {% endif %}
+
+- name: Debug raw CPU check output
   ansible.builtin.debug:
-    var: cpu_check.stdout_lines
+    var: cpu_check
+
+# Parse the CPU healthcheck output using the native parser.
+- name: Parse CPU healthcheck output using native parser
+  ansible.utils.cli_parse:
+    cli: "show processes cpu"
+    text: "{{ cpu_check[0] }}"
+    # Optionally, provide a template if need a custom parser format.
+    # template: "templates/iosxr_cpu_parse.j2"
+  register: parsed_cpu
+
+- name: Debug parsed CPU output
+  ansible.builtin.debug:
+    var: parsed_cpu
+
+# Assert that the CPU utilization is below the defined threshold.
+- name: Assert CPU utilization threshold
+  ansible.builtin.assert:
+    that:
+      - parsed_cpu.parsed[0]['cpu_utilization'] is defined
+      - (parsed_cpu.parsed[0]['cpu_utilization'] | int) <= (cpu_threshold | int)
+    fail_msg: "CPU utilization ({{ parsed_cpu.parsed[0]['cpu_utilization'] }}%) exceeds threshold of {{ cpu_threshold }}%"
+    success_msg: "CPU utilization ({{ parsed_cpu.parsed[0]['cpu_utilization'] }}%) is within acceptable limits"
+  vars:
+    cpu_threshold: "{{ cpu_threshold | default(80) }}"
