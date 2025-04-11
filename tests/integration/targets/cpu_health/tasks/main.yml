@@ -1,0 +1,28 @@
+---
+- name: Starting CPU health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.cpu health_check operation integration tests on connection={{ ansible_connection }}"
+
+- name: Run CPU health check validated content operation
+  block:
+    - name: Run network.cpu validated content with health_checks operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.cpu
+      vars:
+        ansible_network_os: cisco.nxos.nxos
+        cpu_health_check:
+          name: "cpu_health_check"
+          vars:
+            details: true
+            checks:
+              - name: "cpu_utilization_below_threshold"
+                threshold: 85
+      register: cpu_result
+
+- name: CPU health check result
+  ansible.builtin.debug:
+    msg: "CPU Health Check Result: {{ cpu_result }}"
+
+- name: Ending CPU health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.cpu health_check operation integration tests on connection={{ ansible_connection }}"

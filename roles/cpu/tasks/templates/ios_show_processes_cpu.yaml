@@ -1,0 +1,15 @@
+# fmt: off
+[
+  {
+    "name": "CPU Utilization",
+    "getval": "CPU\\sutilization\\sfor\\sfive\\sseconds:\\s(?P<five_second>\\d%)/0%;\\sone\\sminute:\\s(?P<one_min>\\d%);\\sfive\\sminutes:\\s(?P<five_min>\\d%)",
+    "result": {
+      "global": {
+        "five_seconds": "{{ five_second | int }}",
+        "one_minute": "{{ one_min | int }}",
+        "five_minute": "{{ five_min | int }}"
+      }
+    }
+  },
+]
+# fmt: on

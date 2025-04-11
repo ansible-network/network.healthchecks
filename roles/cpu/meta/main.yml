@@ -9,5 +9,5 @@ galaxy_info:
   platforms:
     - name: Cisco IOS XR
       versions:
-        - ">= 6.0"
+        - "all"
 dependencies: []

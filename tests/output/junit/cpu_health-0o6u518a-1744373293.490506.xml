@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="1" tests="10" time="7.500737667083740234375">
+	<testsuite disabled="0" errors="0" failures="1" name="cpu_health-0o6u518a" skipped="1" tests="10" time="7.500737667083740234375">
+		<testcase classname="tests/integration/targets/cpu_health/tasks/main.yml:2" name="[54.190.208.146] cpu: cpu_health : Starting CPU health check integration tests msg=START network.healthchecks.cpu health_check operation integration tests on connection={{ ansible_connection }}" time="0.04754161834716797">
+			<system-out>{
+    "changed": false,
+    "msg": "START network.healthchecks.cpu health_check operation integration tests on connection=ansible.netcommon.network_cli"
+}</system-out>
+		</testcase>
+		<testcase classname="tests/integration/targets/cpu_health/tasks/main.yml:8" name="[54.190.208.146] cpu: Run network.cpu validated content with health_checks operation name=network.healthchecks.cpu" time="0.005737781524658203">
+			<system-out>{
+    "changed": false,
+    "include_args": {
+        "name": "network.healthchecks.cpu"
+    }
+}</system-out>
+		</testcase>
+		<testcase classname="tests/integration/targets/cpu_health/tasks/main.yml:8" name="[include] cpu: Run network.cpu validated content with health_checks operation name=network.healthchecks.cpu" time="0.010412931442260742">
+			<system-out>network.healthchecks.cpu (args={} vars={}): [54.190.208.146]</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:2" name="[54.190.208.146] cpu: network.healthchecks.cpu : Include validation tasks (ensure platform is supported) _raw_params=validation.yml" time="0.005612850189208984">
+			<system-out>{
+    "changed": false,
+    "include": "validation.yml",
+    "include_args": {}
+}</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:2" name="[include] cpu: network.healthchecks.cpu : Include validation tasks (ensure platform is supported) _raw_params=validation.yml" time="0.007852792739868164">
+			<system-out>/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/validation.yml (args={} vars={}): [54.190.208.146]</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:validation.yml:2" name="[54.190.208.146] cpu: network.healthchecks.cpu : Set supported platform list supported_platforms=['ios', 'eos', 'nxos', 'iosxr']" time="0.03507590293884277">
+			<system-out>{
+    "ansible_facts": {
+        "supported_platforms": [
+            "ios",
+            "eos",
+            "nxos",
+            "iosxr"
+        ]
+    },
+    "changed": false
+}</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:validation.yml:10" name="[54.190.208.146] cpu: network.healthchecks.cpu : Fail on unsupported platform _raw_params=unsupported_platform.yml" time="0.007387876510620117">
+			<skipped>Conditional result was False</skipped>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:5" name="[54.190.208.146] cpu: network.healthchecks.cpu : Include OS-specific CPU tasks iosxr _raw_params=./{{ ansible_network_os.split('.')[2] }}.yml" time="0.006148099899291992">
+			<system-out>{
+    "changed": false,
+    "include": "./iosxr.yml",
+    "include_args": {}
+}</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:5" name="[include] cpu: network.healthchecks.cpu : Include OS-specific CPU tasks iosxr _raw_params=./{{ ansible_network_os.split('.')[2] }}.yml" time="0.008714914321899414">
+			<system-out>/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/./iosxr.yml (args={} vars={}): [54.190.208.146]</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:iosxr.yml:2" name="[54.190.208.146] cpu: network.healthchecks.cpu : Parse CPU health check output for IOS-XR command=show processes cpu, parser={'name': 'ansible.netcommon.native'}, set_fact=cpu_health" time="7.366252899169922">
+			<failure message="Could not find or access 'iosxr_show_processes_cpu.yaml'&#10;Searched in:&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/templates/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/targets/cpu_health/templates/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/targets/cpu_health/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/templates/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/templates/iosxr_show_processes_cpu.yaml&#10;&#9;/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/iosxr_show_processes_cpu.yaml on the Ansible Controller.&#10;If you are using a module and expect the file to exist on the remote, see the remote_src option" type="failure">{
+    "msg": "Could not find or access 'iosxr_show_processes_cpu.yaml'\nSearched in:\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/templates/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/targets/cpu_health/templates/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/targets/cpu_health/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/templates/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/templates/iosxr_show_processes_cpu.yaml\n\t/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/tests/output/.tmp/integration/cpu_health-sq73xtwl-ÅÑŚÌβŁÈ/tests/integration/iosxr_show_processes_cpu.yaml on the Ansible Controller.\nIf you are using a module and expect the file to exist on the remote, see the remote_src option"
+}</failure>
+		</testcase>
+	</testsuite>
+</testsuites>

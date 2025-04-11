@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="1" tests="10" time="0.162410259246826171875">
+	<testsuite disabled="0" errors="0" failures="1" name="cpu_health-bakwbed_" skipped="1" tests="10" time="0.162410259246826171875">
+		<testcase classname="tests/integration/targets/cpu_health/tasks/main.yml:2" name="[54.190.208.146] cpu: cpu_health : Starting CPU health check integration tests msg=START network.healthchecks.cpu health_check operation integration tests on connection={{ ansible_connection }}" time="0.07758474349975586">
+			<system-out>{
+    "changed": false,
+    "msg": "START network.healthchecks.cpu health_check operation integration tests on connection=ansible.netcommon.network_cli"
+}</system-out>
+		</testcase>
+		<testcase classname="tests/integration/targets/cpu_health/tasks/main.yml:8" name="[54.190.208.146] cpu: Run network.cpu validated content with health_checks operation name=network.healthchecks.cpu" time="0.005482912063598633">
+			<system-out>{
+    "changed": false,
+    "include_args": {
+        "name": "network.healthchecks.cpu"
+    }
+}</system-out>
+		</testcase>
+		<testcase classname="tests/integration/targets/cpu_health/tasks/main.yml:8" name="[include] cpu: Run network.cpu validated content with health_checks operation name=network.healthchecks.cpu" time="0.010081052780151367">
+			<system-out>network.healthchecks.cpu (args={} vars={}): [54.190.208.146]</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:2" name="[54.190.208.146] cpu: network.healthchecks.cpu : Include validation tasks (ensure platform is supported) _raw_params=validation.yml" time="0.005512237548828125">
+			<system-out>{
+    "changed": false,
+    "include": "validation.yml",
+    "include_args": {}
+}</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:2" name="[include] cpu: network.healthchecks.cpu : Include validation tasks (ensure platform is supported) _raw_params=validation.yml" time="0.00797414779663086">
+			<system-out>/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/validation.yml (args={} vars={}): [54.190.208.146]</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:validation.yml:2" name="[54.190.208.146] cpu: network.healthchecks.cpu : Set supported platform list supported_platforms=['ios', 'eos', 'nxos', 'iosxr']" time="0.03067493438720703">
+			<system-out>{
+    "ansible_facts": {
+        "supported_platforms": [
+            "ios",
+            "eos",
+            "nxos",
+            "iosxr"
+        ]
+    },
+    "changed": false
+}</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:validation.yml:10" name="[54.190.208.146] cpu: network.healthchecks.cpu : Fail on unsupported platform _raw_params=unsupported_platform.yml" time="0.005712032318115234">
+			<skipped>Conditional result was False</skipped>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:5" name="[54.190.208.146] cpu: network.healthchecks.cpu : Include OS-specific CPU tasks iosxr _raw_params=./{{ ansible_network_os.split('.')[2] }}.yml" time="0.00521397590637207">
+			<system-out>{
+    "changed": false,
+    "include": "./iosxr.yml",
+    "include_args": {}
+}</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:main.yml:5" name="[include] cpu: network.healthchecks.cpu : Include OS-specific CPU tasks iosxr _raw_params=./{{ ansible_network_os.split('.')[2] }}.yml" time="0.0077211856842041016">
+			<system-out>/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/./iosxr.yml (args={} vars={}): [54.190.208.146]</system-out>
+		</testcase>
+		<testcase classname="out-of-tree:iosxr.yml:2" name="[54.190.208.146] cpu: network.healthchecks.cpu : Parse CPU health check output for IOS XR command=show process cpu, text={{ cpu_check.stdout[0] }}, parser={'name': 'ansible.netcommon.native', 'template': '{{ playbook_dir }}/roles/cpu/tasks/templates/iosxr_show_process_cpu.yaml'}, set_fact=cpu_health" time="0.006453037261962891">
+			<failure message="The task includes an option with an undefined variable.. 'cpu_check' is undefined&#10;&#10;The error appears to be in '/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/iosxr.yml': line 2, column 3, but may&#10;be elsewhere in the file depending on the exact syntax problem.&#10;&#10;The offending line appears to be:&#10;&#10;---&#10;- name: Parse CPU health check output for IOS XR&#10;  ^ here&#10;" type="failure">{
+    "msg": "The task includes an option with an undefined variable.. 'cpu_check' is undefined\n\nThe error appears to be in '/Users/ruchi/Documents/workspace/collections/ansible_collections/network/healthchecks/roles/cpu/tasks/iosxr.yml': line 2, column 3, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n---\n- name: Parse CPU health check output for IOS XR\n  ^ here\n"
+}</failure>
+		</testcase>
+	</testsuite>
+</testsuites>

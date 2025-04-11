@@ -1,0 +1,30 @@
+# fmt: off
+[
+  {
+    "name": "CPU Utilization",
+    "getval": "CPU\\sutilization\\sfor\\sone\\sminute:\\s*(?P<one_min>\\d+)%;\\s*five\\sminutes:\\s*(?P<five_min>\\d+)%;\\s*fifteen\\sminutes:\\s*(?P<fifteen_min>\\d+)%",
+    "result": {
+      "cpu_utilization": {
+        "1_min_avg": "{{ one_min | int }}",
+        "5_min_avg": "{{ five_min | int }}",
+        "15_min_avg": "{{ fifteen_min | int }}"
+      }
+    }
+  },
+  # {
+  #   "name": "processes_cpu",
+  #   "getval": "^(?P<pid>\\d+)\\s+(?P<one_min>\\d+)%\\s+(?P<five_min>\\d+)%\\s+(?P<fifteen_min>\\d+)%\\s+(?P<process>.+)$",
+  #   "result": {
+  #     "processes": [
+  #       {
+  #         "pid": "{{ pid | int }}",
+  #         "1_min": "{{ one_min | int }}",
+  #         "5_min": "{{ five_min | int }}",
+  #         "15_min": "{{ fifteen_min | int }}",
+  #         "process": "{{ process }}"
+  #       }
+  #     ]
+  #   }
+  # }
+]
+# fmt: on

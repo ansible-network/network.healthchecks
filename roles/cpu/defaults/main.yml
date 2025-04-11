@@ -1,10 +1,4 @@
 ---
 # defaults file for network.healthchecks.cpu
-
-# OS-specific CPU healthcheck commands can be overridden.
-cpu_healthcheck_command_iosxr: "show processes cpu"
-cpu_healthcheck_command_nxos: "show processes cpu"
-cpu_healthcheck_command_ios_eos: "show processes cpu"
-
 # Default CPU threshold percentage
 cpu_threshold: 80
