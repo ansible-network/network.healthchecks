@@ -1,0 +1,3 @@
+---
+# Minimum acceptable temperature (°C); if any sensor exceeds this, it might be unhealthy.
+environment_temp_threshold: 40

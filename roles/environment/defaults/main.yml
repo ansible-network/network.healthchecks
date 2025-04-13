@@ -1,15 +1,3 @@
 ---
 # defaults file for network.healthchecks.environment
-
-# List of commands for Cisco NX-OS devices
-environment_healthcheck_nxos_commands:
-  - "show environment"
-  - "show environment power"
-  - "show environment temperature"
-  - "show environment fan"
-
-# List of commands for Arista EOS devices
-environment_healthcheck_eos_commands:
-  - "show environment"
-  - "show environment power detail"
-  - "show environment power voltage"
+environment_fan_minimum: "non_zero"    # symbolic value to indicate that fan speed must be non-zero.

@@ -1,0 +1,11 @@
+---
+- name: Parse environment output for NX-OS
+  ansible.utils.cli_parse:
+    command: "show environment"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: env_health
+
+- name: Debug environment health (NX-OS)
+  ansible.builtin.debug:
+    var: env_health
