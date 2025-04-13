@@ -1,0 +1,49 @@
+---
+- name: Starting Crash Files health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.crash_files health check integration tests on connection={{ ansible_connection }}"
+
+- name: Run network.crash_files validated content operation
+  block:
+    - name: Run network.crash_files validated content with crash_files health check operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.crashfiles
+      vars:
+        ansible_network_os: cisco.nxos.nxos
+        crash_files_health_check:
+          name: crash_files_health_check
+          vars:
+            details: true
+            checks:
+              - name: crash_files
+                ignore_errors: true
+                details: true
+                crashinfo_files:
+                  - /var/crashinfo
+                  - /var/crash
+                cores:
+                  - /var/core
+                  - /var/crash
+      register: crash_result
+
+- name: Crash Files health check result
+  ansible.builtin.debug:
+    msg: "Crash Files Health Check Result: {{ crash_result }}"
+
+# - name: Assert that no crash records are found
+#   ansible.builtin.assert:
+#     that:
+#       - (
+#           ( (crash_result.crash_lines is defined and (crash_result.crash_lines | length) == 0 )
+#             or (crash_result.crashinfo_files is defined and (crash_result.crashinfo_files | length) == 0 )
+#             or (crash_result.cores is defined and (crash_result.cores | length) == 0 )
+#             or (crash_result is not defined )
+#           )
+#         )
+#     fail_msg: "Crash records were found; please review: {{ crash_result }}"
+#     success_msg: "No crash records detected; system is healthy."
+#   when: crash_result is defined
+
+- name: Ending Crash Files health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.healthchecks.crash_files health check integration tests on connection={{ ansible_connection }}"

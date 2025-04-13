@@ -1,0 +1,6 @@
+---
+- name: Include validation tasks (ensures platform is supported)
+  ansible.builtin.include_tasks: validation.yml
+
+- name: Include OS-specific Crash Files tasks {{ ansible_network_os.split('.')[2] }}
+  ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"

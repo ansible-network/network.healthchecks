@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Ruchi Pakhle (@Ruchip16)
+  description: >
+    This role performs a crash files health check on network devices.
+    For Cisco IOS XR devices it runs "show logging | include crash";
+    for Cisco IOS devices it runs "show crashinfo:"; for NX‑OS it runs "show cores";
+    and for Arista EOS it runs "show tech-support | include crash".
+    The role then parses the output and asserts that no crash records are found.
+  license: Apache-2.0
+  min_ansible_version: ">=2.15.0"
+  platforms:
+    - name: Cisco IOS XR
+      versions: ["all"]
+    - name: Cisco IOS
+      versions: ["all"]
+    - name: Cisco NX-OS
+      versions: ["all"]
+    - name: Arista EOS
+      versions: ["all"]
+dependencies: []

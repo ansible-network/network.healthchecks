@@ -1,0 +1,11 @@
+---
+- name: Parse crash log output for IOS XR
+  ansible.utils.cli_parse:
+    command: "show logging | include crash"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: crash_health
+
+- name: Debug crash health
+  ansible.builtin.debug:
+    var: crash_health

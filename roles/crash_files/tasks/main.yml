@@ -1,6 +1,0 @@
----
-- name: Include tasks
-  ansible.builtin.include_tasks: validation.yml
-
-- name: Run the platform specific tasks
-  ansible.builtin.include_tasks: crash_files.yml
