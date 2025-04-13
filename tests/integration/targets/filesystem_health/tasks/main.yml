@@ -1,0 +1,22 @@
+---
+- name: Starting Filesystem health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.filesystem health check integration tests on connection={{ ansible_connection }}"
+
+- name: Run network.filesystem validated content operation
+  block:
+    - name: Run network.filesystem validated content with filesystem health check operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.filesystem
+      vars:
+        ansible_network_os: cisco.ios.ios
+        filesystem_free_threshold: 10
+      register: fs_result
+
+- name: Filesystem health check result
+  ansible.builtin.debug:
+    msg: "Filesystem Health Check Result: {{ fs_result }}"
+
+- name: Ending Filesystem health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.healthchecks.filesystem health check integration tests on connection={{ ansible_connection }}"

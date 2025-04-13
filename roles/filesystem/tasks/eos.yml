@@ -1,0 +1,11 @@
+---
+- name: Parse filesystem output for EOS
+  ansible.utils.cli_parse:
+    command: "show file systems"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: fs_health
+
+- name: Debug filesystem health (EOS)
+  ansible.builtin.debug:
+    var: fs_health

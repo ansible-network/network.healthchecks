@@ -1,6 +1,11 @@
 ---
-- name: Include tasks
+- name: Include validation tasks (ensure platform is supported)
   ansible.builtin.include_tasks: validation.yml
 
-- name: Run the platform specific tasks
-  ansible.builtin.include_tasks: filesystem.yml
+- name: Include OS-specific Filesystem tasks {{ ansible_network_os.split('.')[2] }}
+  ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"
+
+# - name: Calculate free filesystem percentage
+#   ansible.builtin.set_fact:
+#     filesystem_free_percent: "{{ (fs_health.free / fs_health.total) * 100 | round(2) }}"
+#   when: fs_health is defined and fs_health.total is defined

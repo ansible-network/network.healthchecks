@@ -1,0 +1,14 @@
+# fmt: off
+[
+  {
+    "name": "filesystem_info",
+    "getval": "(?m)^\\*?\\s*(?P<size>\\d+)\\s+(?P<free>\\d+)\\s+(?P<type>disk)\\s+\\S+\\s+(?P<prefix>\\S+)",
+    "result": {
+      "fs_health": {
+        "total": "{{ size | int }}",
+        "free": "{{ free | int }}"
+      }
+    }
+  }
+]
+# fmt: on

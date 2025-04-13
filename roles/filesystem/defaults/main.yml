@@ -1,16 +1,4 @@
 ---
 # defaults file for network.healthchecks.filesystem
-
-# Cisco IOS XR command to list file systems and their statuses
-filesystem_iosxr_command: "show filesystem"
-
-# Cisco IOS XE command to list file systems and their statuses
-filesystem_iosxe_command: "show file systems"
-
-# Cisco NX-OS command to list file systems and their statuses
-filesystem_nxos_command: "dir bootflash:"
-
-# Arista EOS commands for file systems
-filesystem_eos_command:
-  - "show file systems"
-  - "dir flash:"
+# Default minimum free percentage (e.g. 10% free space required)
+filesystem_free_threshold: 10

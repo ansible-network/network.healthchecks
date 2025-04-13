@@ -1,0 +1,11 @@
+---
+- name: Parse filesystem summary output for NX-OS from usage block
+  ansible.utils.cli_parse:
+    command: "dir bootflash:"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: fs_health
+
+- name: Debug filesystem health (NX-OS)
+  ansible.builtin.debug:
+    var: fs_health

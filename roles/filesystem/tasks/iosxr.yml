@@ -1,0 +1,11 @@
+---
+- name: Parse filesystem output for IOS XR (choose harddisk entry)
+  ansible.utils.cli_parse:
+    command: "show filesystem"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: fs_health
+
+- name: Debug filesystem health (IOS XR)
+  ansible.builtin.debug:
+    var: fs_health

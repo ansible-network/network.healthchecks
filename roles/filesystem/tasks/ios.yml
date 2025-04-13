@@ -1,0 +1,11 @@
+---
+- name: Parse filesystem output for IOS (choose bootflash entry)
+  ansible.utils.cli_parse:
+    command: "show file systems"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: fs_health
+
+- name: Debug filesystem health
+  ansible.builtin.debug:
+    var: fs_health

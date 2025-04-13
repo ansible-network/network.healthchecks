@@ -1,0 +1,15 @@
+# fmt: off
+[
+  {
+    "name": "filesystem_summary",
+    "getval": "(?m)Usage for bootflash://\\S+\\s+(?P<used>\\d+) bytes used\\s+(?P<free>\\d+) bytes free\\s+(?P<total>\\d+) bytes total",
+    "result": {
+      "fs_health": {
+        "total": "{{ total | int }}",
+        "free": "{{ free | int }}",
+        "used": "{{ used | int }}"
+      }
+    }
+  }
+]
+# fmt: on
