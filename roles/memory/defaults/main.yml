@@ -1,5 +1,3 @@
 ---
 # defaults file for network.healthchecks.memory
-
-# Command to be executed on the device to check memory usage.
-memory_healthcheck_command: "show memory summary"
+memory_free_threshold: 20

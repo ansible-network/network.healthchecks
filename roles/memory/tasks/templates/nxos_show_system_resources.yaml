@@ -1,0 +1,15 @@
+# fmt: off
+[
+  {
+    "name": "nxos_memory_usage",
+    "getval": "Memory usage:\\s+(?P<total>\\d+)K total,\\s+(?P<used>\\d+)K used,\\s+(?P<free>\\d+)K free",
+    "result": {
+      "memory_usage": {
+        "total": "{{ total | int }}",
+        "used": "{{ used | int }}",
+        "free": "{{ free | int }}"
+      }
+    }
+  }
+]
+# fmt: on˝

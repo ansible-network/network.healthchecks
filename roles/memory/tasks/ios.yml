@@ -1,0 +1,24 @@
+---
+- name: Parse Memory summary output for IOS
+  ansible.utils.cli_parse:
+    command: "show memory summary"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: memory_health
+
+- name: Debug memory health (IOS)
+  ansible.builtin.debug:
+    var: memory_health
+
+# - name: Assert Memory Health (IOS/IOSXE) - Free memory percentage check
+#   ansible.builtin.assert:
+#     that:
+#       - ((memory_health.processor_memory.free / memory_health.processor_memory.total) * 100) >= memory_free_threshold
+#     fail_msg: >
+#       Available processor memory percentage is too low: {{ (memory_health.processor_memory.free / memory_health.processor_memory.total * 100) | round(2) }}%
+#       is below threshold ({{ memory_free_threshold }}%).
+#     success_msg: >
+#       Available processor memory percentage is acceptable: {{ (memory_health.processor_memory.free / memory_health.processor_memory.total * 100) | round(2) }}%.
+#   vars:
+#     memory_free_threshold: "{{ memory_free_threshold | default(20) }}"
+#   when: memory_health.processor_memory is defined

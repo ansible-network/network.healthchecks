@@ -3,3 +3,7 @@
 __pycache__
 *.pyc
 .ansible
+tests/output
+cpu_healthcheck_integration_test_result_ios.log
+cpu_healthcheck_integration_test_result_iosxr.log
+cpu_healthcheck_integration_test_result_nxos.log

@@ -1,0 +1,50 @@
+# fmt: off
+[
+  {
+    "name": "physical_memory",
+    "getval": "(?m)^[ \\t]*Physical Memory:\\s*(?P<phys_total>\\d+)M total \\((?P<phys_avail>\\d+)M available\\)",
+    "result": {
+      "physical_memory": {
+        "total": "{{ phys_total | int }}",
+        "available": "{{ phys_avail | int }}"
+      }
+    }
+  },
+  {
+    "name": "application_memory",
+    "getval": "(?m)^[ \\t]*Application Memory\\s*:\\s*(?P<app_total>\\d+)M \\((?P<app_avail>\\d+)M available\\)",
+    "result": {
+      "application_memory": {
+        "total": "{{ app_total | int }}",
+        "available": "{{ app_avail | int }}"
+      }
+    }
+  },
+  {
+    "name": "image_and_bootram",
+    "getval": "(?m)^[ \\t]*Image:\\s*(?P<image>\\d+)M \\(\\s*bootram:\\s*(?P<bootram>\\d+)M\\)",
+    "result": {
+      "image": {
+        "size": "{{ image | int }}",
+        "bootram": "{{ bootram | int }}"
+      }
+    }
+  },
+  {
+    "name": "reserved_iomem_flashfsys",
+    "getval": "(?m)^[ \\t]*Reserved:\\s*(?P<reserved>\\d+)M,\\s*IOMem:\\s*(?P<iomem>\\d+)M,\\s*flashfsys:\\s*(?P<flashfsys>\\d+)M",
+    "result": {
+      "reserved": "{{ reserved | int }}",
+      "iomem": "{{ iomem | int }}",
+      "flashfsys": "{{ flashfsys | int }}"
+    }
+  },
+  {
+    "name": "shared_window",
+    "getval": "(?m)^[ \\t]*Total shared window:\\s*(?P<shared>\\d+)M",
+    "result": {
+      "total_shared_window": "{{ shared | int }}"
+    }
+  }
+]
+# fmt: on

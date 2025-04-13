@@ -9,7 +9,7 @@
       ansible.builtin.include_role:
         name: network.healthchecks.cpu
       vars:
-        ansible_network_os: cisco.nxos.nxos
+        ansible_network_os: cisco.iosxr.iosxr
         cpu_health_check:
           name: "cpu_health_check"
           vars:
