@@ -1,0 +1,33 @@
+---
+- name: Starting Uptime health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.uptime health check integration tests on connection={{ ansible_connection }}"
+
+- name: Run network.uptime validated content operation
+  block:
+    - name: Run network.uptime validated content with uptime health check operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.uptime
+      vars:
+        ansible_network_os: cisco.nxos.nxos
+        uptime_health_check:
+          name: "uptime_health_check"
+          vars:
+            details: true
+            checks:
+              - name: "uptime_below_threshold"
+                threshold: 85
+              - name: "uptime_above_threshold"
+                threshold: 85
+              - name: "uptime_above_threshold_minutes"
+                threshold: 85
+                uptime_threshold_minutes: 1440
+      register: uptime_result
+
+- name: Uptime health check result
+  ansible.builtin.debug:
+    msg: "Uptime Health Check Result: {{ uptime_result }}"
+
+- name: Ending Uptime health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.healthchecks.uptime health check integration tests on connection={{ ansible_connection }}"

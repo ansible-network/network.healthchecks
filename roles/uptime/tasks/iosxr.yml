@@ -1,0 +1,11 @@
+---
+- name: Parse uptime output for IOS XR
+  ansible.utils.cli_parse:
+    command: "show version"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: uptime_parsed
+
+- name: Debug uptime parsed data (IOS XR)
+  ansible.builtin.debug:
+    var: uptime_parsed

@@ -1,11 +1,4 @@
 ---
 # defaults file for network.healthchecks.uptime
-
-# Cisco IOS XR command to display uptime
-uptime_iosxr_command: "show version | include Uptime"
-
-# Cisco NX-OS command to display uptime
-uptime_nxos_command: "show version | include uptime"
-
-# Arista EOS command to display uptime
-uptime_eos_command: "show version"
+# Define the minimum acceptable uptime in minutes (default: 1440 minutes = 1 day)
+uptime_threshold_minutes: 1440
