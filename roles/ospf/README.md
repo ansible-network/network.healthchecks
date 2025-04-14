@@ -1,32 +1,58 @@
-# network.healthchecks.filesystem
+# Health Checks
 
-## Overview
-The `network.healthchecks.filesystem` role ensures that devices have sufficient disk space and identifies file system errors.
+The role enables user to manage the OSPF resources independent of platforms and perform OSPF health checks.
 
-## Features
-- Check available disk space.
-- Detect file system corruption.
+## Capabilities
 
-## Usage
-### Example: Checking Disk Usage
+**OSPF Health Checks** :
+- Enables users to perform health checks for OSPF neighborship.This platform-agnostic role enables the user to perform OSPF health checks.
+- Users can perform the following health checks:
+  - `all_neighbors_up`: Check if all OSPF neighbors are up.
+  - `all_neighbors_down`: Check if all OSPF neighbors are down.
+  - `min_neighbors_up`: Ensure a minimum number of OSPF neighbors are up.
+  - `ospf_summary_status`: Get a summary status of OSPF neighbors.
+
+This role enables users to create a runtime brownfield inventory with all the OSPF configurations in terms of host vars. These host vars are ansible facts that have been gathered through the *ospfv2, *opfv3 and *ospf_interfaces network resource module. The tasks offered by this role can be observed below:
+
+## Variables
+
+| Variable Name        | Default Value | Required | Type | Description                                                   | Example |
+|:---------------------|:-------------:|:--------:|:----:|:-------------------------------------------------------------|:-------:|
+| `ansible_network_os` | `""`          | no      | str  | Network OS to be used during detection.                      | `"cisco.nxos.nxos"` |
+| `data_store`         | `""`          | yes      | dict | Specifies the data store to be used (local or SCM).           | See examples below. |
+| `operations`         | `[]`          | yes      | list | List of operations to perform during the health checks.        | See examples below. |
+
+### Perform OSPF Health Checks
+- Health Checks operation fetches the current status of OSPF Neighborship health.
+- This can also include details about the OSPF metrics(state, peer, priority, etc).
+
 ```yaml
-- name: Check file system status
-  hosts: network_devices
-  gather_facts: no
+health_checks.yml
+---
+- name: Perform OSPF health checks
+  hosts: nxos
+  gather_facts: false
   tasks:
-    - name: Verify disk space availability
-      ansible.builtin.include_role:
-        name: network.healthchecks.filesystem
-        min_free_space: 200  # Minimum 200MB free space required
-
+  - name: OSPF Manager
+    ansible.builtin.include_role:
+      name: network.healthchecks.ospf
+    vars:
+      ansible_network_os: cisco.nxos.nxos
+      operations:
+        - name: health_check
+          vars:
+            details: True
+            checks:
+              - name: all_neighbors_up
+              - name: all_neighbors_down
+              - name: min_neighbors_up
+                min_count: 1
+              - name: ospf_status_summary
 ```
 
 ## License
-
 GNU General Public License v3.0 or later.
-
 See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
 
 ## Author Information
-
 - Ansible Network Content Team
