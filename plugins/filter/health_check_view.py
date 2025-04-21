@@ -4,7 +4,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
     name: health_check_view
-    author: Rohit Thakur (@rohitthakur2590)
+    author: Ruchi Pakhle (@Ruchip16)
     version_added: "1.0.0"
     short_description: Generate the filtered health check dict based on the provided target.
     description:
