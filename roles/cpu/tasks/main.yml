@@ -5,12 +5,14 @@
 - name: Include OS-specific CPU tasks {{ ansible_network_os.split('.')[2] }}
   ansible.builtin.include_tasks: ./{{ ansible_network_os.split('.')[2] }}.yml
 
-- name: Assert CPU utilization threshold
-  ansible.builtin.assert:
-    that:
-      - cpu_utilization <= (cpu_threshold | int)
-    fail_msg: "CPU utilization {{ cpu_utilization }}% exceeds threshold ({{ cpu_threshold }}%)."
-    success_msg: "CPU utilization {{ cpu_utilization }}% is within acceptable limits."
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+    health_checks: "{{ cpu_health | network.healthchecks.health_check_view(health_check) }}"
   vars:
-    cpu_threshold: "{{ lookup('vars', 'cpu_threshold') | default(80) }}"
-  when: cpu_utilization is defined
+    health_check:
+      name: health_check
+      vars:
+        checks:
+          - name: cpu_utilization
+            threshold: "{{ lookup('vars', 'cpu_threshold') | default(80) }}"
+          - name: cpu_status_summary

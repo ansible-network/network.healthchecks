@@ -11,20 +11,20 @@
       }
     }
   },
-  # {
-  #   "name": "processes_cpu",
-  #   "getval": "^(?P<pid>\\d+)\\s+(?P<one_min>\\d+)%\\s+(?P<five_min>\\d+)%\\s+(?P<fifteen_min>\\d+)%\\s+(?P<process>.+)$",
-  #   "result": {
-  #     "processes": [
-  #       {
-  #         "pid": "{{ pid | int }}",
-  #         "1_min": "{{ one_min | int }}",
-  #         "5_min": "{{ five_min | int }}",
-  #         "15_min": "{{ fifteen_min | int }}",
-  #         "process": "{{ process }}"
-  #       }
-  #     ]
-  #   }
-  # }
+  {
+    "name": "processes_cpu",
+    "getval": "^(?P<pid>\\d+)\\s+(?P<one_min>\\d+)%\\s+(?P<five_min>\\d+)%\\s+(?P<fifteen_min>\\d+)%\\s+(?P<process>.+)$",
+    "result": {
+      "processes": [
+        {
+          "pid": "{{ pid | int }}",
+          "1_min": "{{ one_min | int }}",
+          "5_min": "{{ five_min | int }}",
+          "15_min": "{{ fifteen_min | int }}",
+          "process": "{{ process }}"
+        }
+      ]
+    }
+  }
 ]
 # fmt: on

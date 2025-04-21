@@ -5,25 +5,14 @@
 - name: Include OS-specific Uptime tasks {{ ansible_network_os.split('.')[2] }}
   ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"
 
-# - name: Calculate total uptime in minutes
-#   ansible.builtin.set_fact:
-#     uptime_total_minutes: >-
-#       {{
-#         (
-#           (uptime_parsed.weeks | default(0)) * 7 * 1440 +
-#           (uptime_parsed.days | default(0)) * 1440 +
-#           (uptime_parsed.hours | default(0)) * 60 +
-#           (uptime_parsed.minutes | default(0))
-#         )
-#       }}
-#   when: uptime_parsed is defined
-
-# - name: Assert system uptime meets or exceeds threshold
-#   ansible.builtin.assert:
-#     that:
-#       - uptime_total_minutes >= uptime_threshold_minutes
-#     fail_msg: "System uptime ({{ uptime_total_minutes }} minutes) is below the threshold of {{ uptime_threshold_minutes }} minutes."
-#     success_msg: "System uptime ({{ uptime_total_minutes }} minutes) meets or exceeds the threshold."
-#   vars:
-#     uptime_threshold_minutes: "{{ lookup('vars', 'uptime_threshold_minutes') | default(1440) }}"
-#   when: uptime_total_minutes is defined
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+    health_checks: "{{ uptime_parsed | network.healthchecks.health_check_view(health_check) }}"
+  vars:
+    health_check:
+      name: health_check
+      vars:
+        checks:
+          - name: uptime
+            min_uptime: "{{ lookup('vars', 'uptime_threshold_minutes') | default(1440) }}"
+          - name: uptime_status_summary

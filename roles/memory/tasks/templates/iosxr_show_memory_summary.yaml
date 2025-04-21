@@ -5,7 +5,7 @@
     "getval": "(?m)^[ \\t]*Physical Memory:\\s*(?P<phys_total>\\d+)M total \\((?P<phys_avail>\\d+)M available\\)",
     "result": {
       "physical_memory": {
-        "total": "{{ phys_total | int }}",
+        "total_mb": "{{ phys_total | int }}",
         "available": "{{ phys_avail | int }}"
       }
     }

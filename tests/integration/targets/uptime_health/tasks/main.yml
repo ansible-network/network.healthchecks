@@ -9,7 +9,7 @@
       ansible.builtin.include_role:
         name: network.healthchecks.uptime
       vars:
-        ansible_network_os: cisco.nxos.nxos
+        # ansible_network_os: cisco.nxos.nxos
         uptime_health_check:
           name: "uptime_health_check"
           vars:
