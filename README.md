@@ -4,7 +4,7 @@
 
 ## About
 
-- **Ansible Network Health Checks Collection** provides platform-agnostic roles to perform automated health checks across various network devices. 
+- **Ansible Network Health Checks Collection** provides platform-agnostic roles to perform automated health checks across various network devices.
 - The collection includes capabilities for performing network device health, detecting failures, and recommending proactive maintenance.
 - Designed for **network administrators, automation engineers, and IT professionals**, this collection enhances **network visibility, operational monitoring, and configuration validation**.
 
@@ -17,16 +17,11 @@
   - [cisco.ios](https://github.com/ansible-collections/cisco.ios)
   - [cisco.iosxr](https://github.com/ansible-collections/cisco.iosxr)
   - [cisco.nxos](https://github.com/ansible-collections/cisco.nxos)
-  - [junipernetworks.junos](https://github.com/ansible-collections/junipernetworks.junos)
 
 ## Installation
 
 To consume this **Validated Content** from **Automation Hub**, add the following to your `ansible.cfg`:
 
-
-
-## Installation
-To consume this Validated Content from Automation Hub, the following needs to be added to ansible.cfg:
 ```
 [galaxy]
 server_list = automation_hub
@@ -47,24 +42,34 @@ ansible-galaxy collection install network.healthchecks
 ansible-galaxy collection install network.bgp
 ```
 
-## Use Cases
+## Roles
 
-`CPU Status`:
-- Check CPU utilization to identify excessive resource consumption that may lead to performance degradation.
-  
-`Memory Status`:
-- Track memory usage to detect leaks or abnormal consumption that could impact system stability. Ensure optimal memory allocation for smooth network operations.
+The collection includes the following roles for network device health monitoring:
 
-`Environment Status`: Check environmental factors like temperature and power supply to prevent hardware failures. Detect deviations from normal conditions.
+### CPU Health Check
+The `network.healthchecks.cpu` role monitors CPU usage on network devices to detect excessive CPU consumption and ensure device stability.
 
-`File System Status`: Ensure sufficient disk space and check for file system errors that may affect operations. This helps to prevent storage-related failures by monitoring file system health.
+For detailed documentation, features, and examples, see the [CPU Health Check README](roles/cpu/README.md).
 
-`Unexpected Crash Files`: This enables users to identify unexpected core dumps and crash logs that indicate system instability. Provide early detection of software or hardware failures for faster troubleshooting.
+### Memory Health Check
+The `network.healthchecks.memory` role monitors memory usage on network devices to detect excessive memory consumption and ensure device stability.
 
-`System Uptime`: This enables users to track system uptime to detect unexpected reboots or device restarts.
+For detailed documentation, features, and examples, see the [Memory Health Check README](roles/memory/README.md).
 
-`Interfaces Status`: This enables users to run health checks on network interfaces
+### Uptime Health Check
+The `network.healthchecks.uptime` role monitors system uptime on network devices to detect system stability and identify devices that may need maintenance.
 
+For detailed documentation, features, and examples, see the [Uptime Health Check README](roles/uptime/README.md).
+
+### Environment Health Check
+The `network.healthchecks.environment` role monitors environmental factors like temperature and power supply to prevent hardware failures.
+
+For detailed documentation, features, and examples, see the [Environment Health Check README](roles/environment/README.md).
+
+### Filesystem Health Check
+The `network.healthchecks.filesystem` role ensures sufficient disk space and checks for file system errors that may affect operations.
+
+For detailed documentation, features, and examples, see the [Filesystem Health Check README](roles/filesystem/README.md).
 
 ## Testing
 
