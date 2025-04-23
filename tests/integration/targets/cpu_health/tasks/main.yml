@@ -10,13 +10,9 @@
         name: network.healthchecks.cpu
       vars:
         # ansible_network_os: cisco.ios.ios
-        cpu_health_check:
-          name: "cpu_health_check"
-          vars:
-            details: true
-            checks:
-              - name: "cpu_utilization_below_threshold"
-                threshold: 85
+        details: true
+        warning_threshold: 90
+        critical_threshold: 95
       register: cpu_result
 
 - name: CPU health check result

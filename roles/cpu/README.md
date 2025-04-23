@@ -7,8 +7,8 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 - Monitor CPU utilization with configurable thresholds
 - Detect high CPU load conditions
 - Generate alerts for excessive usage
-- Provide detailed health check status (successful/unsuccessful)
-- Show CPU utilization statistics (5-second, 1-minute, 5-minute averages)
+- Provide detailed health check status (PASS/FAIL)
+- Show CPU utilization statistics (1-minute, 5-minute averages)
 
 ## Variables
 | Variable Name   | Default Value | Required | Type  | Description                                      |
@@ -16,6 +16,7 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 | `cpu_threshold` | 80     | no       | int   | CPU usage percentage threshold for health check. |
 
 ## Usage
+
 ### Example: Monitoring CPU Usage
 ```yaml
 - name: Monitor CPU utilization
@@ -32,32 +33,29 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
     var: cpu_result.health_checks
 ```
 
-### Health Check Output Example
+### Output: CPU Health Check Status
 ```json
 {
-    "health_checks": {
-        "cpu_utilization": {
-            "check_status": "successful",
-            "current_utilization": 45,
-            "threshold": 80
-        },
-        "cpu_status_summary": {
-            "five_minute": 45,
-            "five_seconds": 40,
-            "one_minute": 42
-        },
-        "status": "successful"
-    }
+    "ansible_facts": {
+        "health_checks": {
+            "details": {
+                "1_min_avg": 0,
+                "5_min_avg": 0,
+                "threshold": 80
+            },
+            "status": "PASS"
+        }
+    },
+    "changed": false
 }
 ```
 
 ### Health Check Status
-- `check_status`: Indicates whether the CPU utilization is within acceptable limits
-  - `successful`: CPU utilization is below the threshold
-  - `unsuccessful`: CPU utilization exceeds the threshold
 - `status`: Overall health check status
-  - `successful`: All checks passed (or failed checks are ignored)
-  - `unsuccessful`: At least one non-ignored check failed
+- `details`: CPU metrics
+  - `1_min_avg`: 1-minute CPU utilization average
+  - `5_min_avg`: 5-minute CPU utilization average
+  - `threshold`: CPU utilization threshold (default: 80)
 
 ## License
 
