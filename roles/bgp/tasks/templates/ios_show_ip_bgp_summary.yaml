@@ -18,7 +18,7 @@
   },
   {
     "name": "neighbors",
-    "getval": "^(?P<peer>\\d+\\.\\d+\\.\\d+\\.\\d+)\\s+       (?P<version>\\d+)\\s+(?P<peer_as>\\d+)\\s+(?P<msg_rcvd>\\d+)\\s+(?P<msg_sent>\\d+)\\s+(?P<tbl_ver>\\d+)\\s+(?P<input_queue>\\d+)\\s+(?P<output_queue>\\d+)\\s+(?P<up_down>\\S+)\\s+(?P<state>\\S+)$",
+    "getval": "(?m)^(?P<peer>\\d+\\.\\d+\\.\\d+\\.\\d+)\\s+(?P<version>\\d+)\\s+(?P<peer_as>\\d+)\\s+(?P<msg_rcvd>\\d+)\\s+(?P<msg_sent>\\d+)\\s+(?P<tbl_ver>\\d+)\\s+(?P<input_queue>\\d+)\\s+(?P<output_queue>\\d+)\\s+(?P<up_down>\\S+)\\s+(?P<state>\\S+)$",
     "result": {
       "neighbors": [
         {
