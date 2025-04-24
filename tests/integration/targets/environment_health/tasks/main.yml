@@ -9,14 +9,10 @@
       ansible.builtin.include_role:
         name: network.healthchecks.environment
       vars:
-        ansible_network_os: cisco.nxos.nxos
-        environment_health_check:
-          name: environment_health_check
-          vars:
-            details: true
-            checks:
-              - name: "environment minimum threshold"
-                environment_temp_threshold: 40
+        details: true
+        checks:
+          - name: "environment minimum threshold"
+            environment_temp_threshold: 40
       register: env_result
 
 - name: Environment health check result

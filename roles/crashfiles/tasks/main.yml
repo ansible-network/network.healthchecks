@@ -4,3 +4,26 @@
 
 - name: Include OS-specific Crash Files tasks {{ ansible_network_os.split('.')[2] }}
   ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"
+
+- name: Debug raw Crash Files health data
+  ansible.builtin.debug:
+    var: crash_health
+
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+    health_checks: >-
+      {{
+        crash_health | network.healthchecks.health_check_view(
+          checks,
+          details=details | default(false)
+        )
+      }}
+  vars:
+    checks:
+      - name: crash_files
+      - name: crash_files_summary
+
+- name: Crash Files health checks
+  ansible.builtin.debug:
+    var: health_checks
+  failed_when: "'FAIL' == health_checks.status"

@@ -83,7 +83,7 @@ def health_check_view(*args, **kwargs):
             "refer 'network.healthchecks.health_check_view' filter plugin documentation for details"
         )
 
-    health_facts = data["health_facts"]
+    health_facts = data["health_facts"] or {}
     target = data["target"]
     health_checks = {}
     health_checks['status'] = 'PASS'
@@ -149,11 +149,38 @@ def health_check_view(*args, **kwargs):
             if kwargs.get('details', False):
                 health_checks['details'] = cpu_summary
 
+        # Environment Health Checks
+        if any(check['name'] in ['environment_minimum_threshold'] for check in checks):
+            env_health = health_facts.get('env_health', {})
+            temp_threshold = next((check.get('environment_temp_threshold', 40) for check in checks if check['name'] == 'environment_minimum_threshold'), 40)
+
+            # Check temperature if available
+            if 'temperature' in env_health:
+                current_temp = env_health['temperature'].get('current_temp', 0)
+                if current_temp > temp_threshold:
+                    health_checks['status'] = 'FAIL'
+
+            # Check fan status
+            if 'fans' in env_health:
+                fan_status = env_health['fans'].get('status', '')
+                if fan_status and fan_status.lower() != 'ok':
+                    health_checks['status'] = 'FAIL'
+
+            # Check power supply if available
+            if 'power' in env_health:
+                power_status = env_health['power'].get('status', '')
+                if power_status and power_status.lower() != 'ok':
+                    health_checks['status'] = 'FAIL'
+
+            # Always include details if details flag is True
+            if kwargs.get('details', False):
+                health_checks['details'] = env_health
+
     # Handle BGP health checks
     elif target['name'] == 'health_check':
-        vars = target.get('vars')
+        vars = target.get('vars', {})
         if vars:
-            checks = vars.get('checks')
+            checks = vars.get('checks', [])
             dn_lst = []
             un_lst = []
             if health_facts.get("neighbors"):
@@ -173,6 +200,24 @@ def health_check_view(*args, **kwargs):
 
             details = {}
             data = get_bgp_health(checks)
+
+            # Handle crash files health checks
+            if any(check['name'] in ['crash_files', 'crash_files_summary'] for check in checks):
+                crash_files = health_facts.get('crash_files', [])
+                for check in checks:
+                    if check['name'] == 'crash_files':
+                        n_dict = {}
+                        n_dict['total_crash_files'] = len(crash_files)
+                        n_dict['check_status'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
+                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['status'] = 'FAIL'
+                        health_checks[check['name']] = n_dict
+                    elif check['name'] == 'crash_files_summary':
+                        n_dict = {
+                            'total_crash_files': len(crash_files),
+                            'crash_files': crash_files
+                        }
+                        health_checks[check['name']] = n_dict
 
             # Handle memory health checks
             if any(check['name'] in ['memory_utilization', 'memory_status_summary', 'memory_free', 'memory_buffers', 'memory_cache'] for check in checks):

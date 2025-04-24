@@ -1,27 +1,52 @@
 # network.healthchecks.crash_files
 
 ## Overview
-The `network.healthchecks.crash_files` role helps in detecting unexpected crash logs or core dumps on network devices. These logs may indicate hardware or software failures.
+The `network.healthchecks.crash_files` role helps in detecting unexpected crash logs or core dumps on network devices. These logs may indicate hardware or software failures. The role provides a comprehensive health check view that shows the status of crash files and overall system health.
 
 ## Features
-- Identify crash files or core dumps.
+- Detect crash files or core dumps
+- Generate alerts for crash file presence
+- Provide detailed health check status (PASS/FAIL)
+- Show crash file summary and details
 
 ## Variables
 | Variable Name   | Default Value | Required | Type  | Description                                      |
 |----------------|--------------|----------|-------|--------------------------------------------------|
 | `log_directory` | `"/var/logs/crash"` | no | str  | Directory path to check for crash files.        |
+| `details` | `false` | no | bool | Whether to include detailed crash file information in output |
 
 ## Usage
-### Example: Checking for Crash Logs
+
+### Example: Checking for Crash Files
 ```yaml
 - name: Detect crash files
-  hosts: network_devices
-  gather_facts: no
-  tasks:
-    - name: Scan for crash logs
-      ansible.builtin.include_role:
-        name: network.healthchecks.crash_files
+  ansible.builtin.include_role:
+    name: network.healthchecks.crash_files
+  vars:
+    details: true
+  register: crash_result
+
+- name: Display crash files health check results
+  ansible.builtin.debug:
+    var: crash_result.health_checks
 ```
+
+### Output: Crash Files Health Check Status
+```json
+{
+    "ansible_facts": {
+        "health_checks": {
+            "status": "PASS"
+        }
+    },
+    "changed": false
+}
+```
+
+### Health Check Status
+- `status`: Overall health check status (PASS/FAIL)
+  - PASS: No crash files detected
+  - FAIL: Crash files detected
 
 ## License
 
