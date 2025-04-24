@@ -15,10 +15,6 @@
         critical_threshold: 95
       register: cpu_result
 
-- name: CPU health check result
-  ansible.builtin.debug:
-    msg: "CPU Health Check Result: {{ cpu_result }}"
-
-- name: Ending CPU health check integration tests
+- name: Debug
   ansible.builtin.debug:
     msg: "END network.cpu health_check operation integration tests on connection={{ ansible_connection }}"
