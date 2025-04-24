@@ -3,11 +3,9 @@
   ansible.builtin.set_fact:
     supported_platforms:
       - "ios"
-      - "junos"
       - "eos"
       - "nxos"
       - "iosxr"
-      - "vyos"
 
 - name: Conditional test
   ansible.builtin.include_tasks: "unsupported_platform.yaml"
