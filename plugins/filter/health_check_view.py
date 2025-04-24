@@ -310,39 +310,6 @@ def health_check_view(*args, **kwargs):
                     health_checks['status'] = 'FAIL'
                 health_checks[data['min_up'].get('name')] = n_dict
 
-            # Handle interfaces health checks
-            if any(check['name'] in ['all_operational_state_up', 'min_operational_state_up', 'all_admin_state_up', 'min_admin_state_up'] for check in checks):
-                interfaces_stats = health_facts.get('interfaces_status_summery', {})
-                for check in checks:
-                    if check['name'] == 'all_operational_state_up':
-                        n_dict = {}
-                        n_dict.update(interfaces_stats)
-                        n_dict['check_status'] = 'PASS' if interfaces_stats['total'] == interfaces_stats['up'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
-                        health_checks[check['name']] = n_dict
-                    elif check['name'] == 'min_operational_state_up':
-                        n_dict = {}
-                        n_dict.update(interfaces_stats)
-                        n_dict['check_status'] = 'PASS' if check['min_count'] <= interfaces_stats['up'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
-                        health_checks[check['name']] = n_dict
-                    elif check['name'] == 'all_admin_state_up':
-                        n_dict = {}
-                        n_dict.update(interfaces_stats)
-                        n_dict['check_status'] = 'PASS' if interfaces_stats['total'] == interfaces_stats['admin_up'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
-                        health_checks[check['name']] = n_dict
-                    elif check['name'] == 'min_admin_state_up':
-                        n_dict = {}
-                        n_dict.update(interfaces_stats)
-                        n_dict['check_status'] = 'PASS' if check['min_count'] <= interfaces_stats['admin_up'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
-                        health_checks[check['name']] = n_dict
-
             # Update overall status
             if any(check.get('check_status') == 'FAIL' for check in health_checks.values() if isinstance(check, dict)):
                 health_checks['status'] = 'FAIL'
@@ -386,17 +353,6 @@ def get_ignore_status(item):
     if not item.get("ignore_errors"):
         item['ignore_errors'] = False
     return item
-
-
-def get_interface_status(stats, check, count=None):
-    if check == 'admin_up':
-        return 'PASS' if stats['total'] == stats['admin_up'] else 'FAIL'
-    elif check == 'oper_up':
-        return 'PASS' if stats['total'] == stats['up'] else 'FAIL'
-    elif check == 'min_admin':
-        return 'PASS' if count <= stats['admin_up'] else 'FAIL'
-    else:  # min_oper
-        return 'PASS' if count <= stats['up'] else 'FAIL'
 
 
 class FilterModule(object):

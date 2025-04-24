@@ -9,19 +9,11 @@
       ansible.builtin.include_role:
         name: network.healthchecks.uptime
       vars:
-        # ansible_network_os: cisco.nxos.nxos
-        uptime_health_check:
-          name: "uptime_health_check"
-          vars:
-            details: true
-            checks:
-              - name: "uptime_below_threshold"
-                threshold: 85
-              - name: "uptime_above_threshold"
-                threshold: 85
-              - name: "uptime_above_threshold_minutes"
-                threshold: 85
-                uptime_threshold_minutes: 1440
+        details: true
+        warning_below_threshold: 1440  # Warn if uptime is below 1 day (in minutes)
+        critical_below_threshold: 60   # Fail if uptime is below 1 hour (frequent reboot)
+        warning_above_threshold_days: 180  # Warn if uptime exceeds 180 days (e.g., OS patching overdue)
+        critical_above_threshold_days: 365  # Fail if uptime exceeds 1 year (e.g., rollover risk)
       register: uptime_result
 
 - name: Uptime health check result

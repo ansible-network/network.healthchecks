@@ -9,7 +9,6 @@
       ansible.builtin.include_role:
         name: network.healthchecks.cpu
       vars:
-        # ansible_network_os: cisco.ios.ios
         details: true
         warning_threshold: 90
         critical_threshold: 95

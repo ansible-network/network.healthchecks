@@ -9,17 +9,14 @@
       ansible.builtin.include_role:
         name: network.healthchecks.crashfiles
       vars:
+        crashinfo_files:
+          - /var/crashinfo
+          - /var/crash
+        cores:
+          - /var/core
+          - /var/crash
+        ignore_errors: true
         details: true
-        checks:
-          - name: crash_files
-            ignore_errors: true
-            details: true
-            crashinfo_files:
-              - /var/crashinfo
-              - /var/crash
-            cores:
-              - /var/core
-              - /var/crash
       register: crash_result
 
 - name: Ending Crash Files health check integration tests

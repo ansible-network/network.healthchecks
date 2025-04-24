@@ -9,7 +9,6 @@
       ansible.builtin.include_role:
         name: network.healthchecks.filesystem
       vars:
-        ansible_network_os: cisco.ios.ios
         filesystem_free_threshold: 10
       register: fs_result
 

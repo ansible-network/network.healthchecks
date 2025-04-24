@@ -50,6 +50,66 @@ health_checks.yml
               - name: ospf_status_summary
 ```
 
+### Output Example
+```json
+{
+    "ansible_facts": {
+        "health_checks": {
+            "all_neighbors_down": {
+                "check_status": "FAIL",
+                "details": {
+                    "neighbors": [
+                        {
+                            "address": "10.1.1.2",
+                            "area": "0.0.0.0",
+                            "interface": "GigabitEthernet1",
+                            "state": "FULL/BDR"
+                        }
+                    ]
+                },
+                "down": 0,
+                "total": 1,
+                "up": 1
+            },
+            "all_neighbors_up": {
+                "check_status": "PASS",
+                "details": {
+                    "neighbors": [
+                        {
+                            "address": "10.1.1.2",
+                            "area": "0.0.0.0",
+                            "interface": "GigabitEthernet1",
+                            "state": "FULL/BDR"
+                        }
+                    ]
+                },
+                "down": 0,
+                "total": 1,
+                "up": 1
+            },
+            "min_neighbors_up": {
+                "check_status": "PASS",
+                "details": {
+                    "neighbors": [
+                        {
+                            "address": "10.1.1.2",
+                            "area": "0.0.0.0",
+                            "interface": "GigabitEthernet1",
+                            "state": "FULL/BDR"
+                        }
+                    ]
+                },
+                "down": 0,
+                "total": 1,
+                "up": 1
+            },
+            "status": "PASS"
+        }
+    },
+    "changed": false
+}
+```
+
 ## License
 GNU General Public License v3.0 or later.
 See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.

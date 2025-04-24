@@ -10,9 +10,8 @@
         name: network.healthchecks.environment
       vars:
         details: true
-        checks:
-          - name: "environment minimum threshold"
-            environment_temp_threshold: 40
+        critical_temp_threshold: 40
+        warning_temp_threshold: 30
       register: env_result
 
 - name: Environment health check result

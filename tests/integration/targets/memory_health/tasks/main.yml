@@ -9,15 +9,12 @@
       ansible.builtin.include_role:
         name: network.healthchecks.memory
       vars:
-        # ansible_network_os: cisco.nxos.nxos
         critical_threshold: 90
         warning_threshold: 85
         min_free_memory_mb: 100
         min_buffers_mb: 50
         min_cache_mb: 50
       register: memory_result
-
-# keep the memory variables output small like just 187.2 maybe
 
 - name: Ending Memory health check integration tests
   ansible.builtin.debug:

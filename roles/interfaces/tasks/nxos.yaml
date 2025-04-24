@@ -3,5 +3,5 @@
   ansible.utils.cli_parse:
     command: "show interface"
     parser:
-      name: ansible.netcommon.native
+      name: ansible.netcommon.content_templates
     set_fact: interfaces_health
