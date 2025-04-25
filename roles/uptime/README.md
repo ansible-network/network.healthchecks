@@ -35,7 +35,7 @@ The `network.healthchecks.uptime` role allows monitoring of system uptime on net
 {
     "health_checks": {
         "uptime": {
-            "check_status": "successful",
+            "check_status": "PASS",
             "current_uptime": 5760,
             "min_uptime": 1440
         },
@@ -45,7 +45,7 @@ The `network.healthchecks.uptime` role allows monitoring of system uptime on net
             "hours": 22,
             "minutes": 36
         },
-        "status": "successful"
+        "status": "PASS"
     }
 }
 ```
