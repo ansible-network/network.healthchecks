@@ -93,6 +93,35 @@ def health_check_view(*args, **kwargs):
         checks = target
         data = get_health(checks)
 
+        # Filesystem Health Checks
+        if 'fs_health' in health_facts:
+            # Handle nested fs_health structure
+            fs_data = health_facts['fs_health'].get('fs_health', {})
+            free_percent = (fs_data.get('free', 0) / fs_data.get('total', 1)) * 100
+            free_threshold = kwargs.get('filesystem_free_threshold', 10)
+            
+            if free_percent < free_threshold:
+                health_checks['status'] = 'FAIL'
+                health_checks['filesystem'] = {
+                    'check_status': 'FAIL',
+                    'free_percent': round(free_percent, 2),
+                    'threshold': free_threshold,
+                    'total': fs_data.get('total', 0),
+                    'free': fs_data.get('free', 0)
+                }
+            else:
+                health_checks['filesystem'] = {
+                    'check_status': 'PASS',
+                    'free_percent': round(free_percent, 2),
+                    'threshold': free_threshold,
+                    'total': fs_data.get('total', 0),
+                    'free': fs_data.get('free', 0)
+                }
+
+            # Always include details if details flag is True
+            if kwargs.get('details', False):
+                health_checks['details'] = fs_data
+
         # CPU Health Checks
         if data['cpu_summary']:
             # Handle NX-OS CPU structure

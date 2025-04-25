@@ -40,7 +40,7 @@ The `network.healthchecks.environment` role helps in monitoring the environmenta
 {
     "ansible_facts": {
         "health_checks": {
-            "status": "PASS",
+            "status": "FAIL",
             "details": {
                 "fans": {
                     "air_filter": "NotSupported",

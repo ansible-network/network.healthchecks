@@ -9,7 +9,7 @@
       ansible.builtin.include_role:
         name: network.healthchecks.filesystem
       vars:
-        filesystem_free_threshold: 10
+        min_free_space_mb: 10
       register: fs_result
 
 - name: Filesystem health check result

@@ -1,25 +1,66 @@
 # network.healthchecks.filesystem
 
 ## Overview
-The `network.healthchecks.filesystem` role ensures that devices have sufficient disk space and identifies file system errors.
+The `network.healthchecks.filesystem` role allows monitoring of filesystem usage on network devices. This helps detect insufficient disk space, ensuring device stability and performance. The role provides a comprehensive health check view that shows the status of filesystem utilization and overall system health.
 
 ## Features
-- Check available disk space.
-- Detect file system corruption.
+- Monitor filesystem utilization with configurable thresholds
+- Detect low disk space conditions
+- Generate alerts for insufficient free space
+- Provide detailed health check status (PASS/FAIL)
+- Show filesystem statistics (total space, free space, utilization percentage)
+
+## Variables
+| Variable Name   | Default Value | Required | Type  | Description                                      |
+|----------------|--------------|----------|-------|--------------------------------------------------|
+| `filesystem_free_threshold` | 10     | no       | int   | Minimum free space percentage threshold for health check. |
 
 ## Usage
-### Example: Checking Disk Usage
-```yaml
-- name: Check file system status
-  hosts: network_devices
-  gather_facts: no
-  tasks:
-    - name: Verify disk space availability
-      ansible.builtin.include_role:
-        name: network.healthchecks.filesystem
-        min_free_space: 200  # Minimum 200MB free space required
 
+### Example: Monitoring Filesystem Usage
+```yaml
+- name: Monitor filesystem utilization
+  ansible.builtin.include_role:
+    name: network.healthchecks.filesystem
+  vars:
+    filesystem_free_threshold: 10
+    ignore_errors: false
+  register: fs_result
+
+- name: Display filesystem health check results
+  ansible.builtin.debug:
+    var: fs_result.health_checks
 ```
+
+### Output: Filesystem Health Check Status
+```json
+{
+    "ansible_facts": {
+        "health_checks": {
+            "filesystem": {
+                "check_status": "PASS",
+                "free_percent": 93.42,
+                "threshold": 10,
+                "total": 2001584128,
+                "free": 1869959168
+            },
+            "status": "PASS",
+        }
+    },
+    "changed": false
+}
+```
+
+### Health Check Status
+- `status`: Overall health check status
+  - `PASS`: Free space is above the threshold
+  - `FAIL`: Free space is below the threshold
+- `filesystem`: Filesystem metrics
+  - `check_status`: Individual filesystem check status
+  - `free_percent`: Current free space percentage
+  - `threshold`: Configured free space threshold
+  - `total`: Total filesystem space in bytes
+  - `free`: Free filesystem space in bytes
 
 ## License
 

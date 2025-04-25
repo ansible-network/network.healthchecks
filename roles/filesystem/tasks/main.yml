@@ -5,7 +5,25 @@
 - name: Include OS-specific Filesystem tasks {{ ansible_network_os.split('.')[2] }}
   ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"
 
-# - name: Calculate free filesystem percentage
-#   ansible.builtin.set_fact:
-#     filesystem_free_percent: "{{ (fs_health.free / fs_health.total) * 100 | round(2) }}"
-#   when: fs_health is defined and fs_health.total is defined
+- name: Debug raw filesystem health data
+  ansible.builtin.debug:
+    var: fs_health
+
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+    health_checks: >-
+      {{
+        fs_health | network.healthchecks.health_check_view(
+          checks,
+          details=details | default(false),
+          filesystem_free_threshold=filesystem_free_threshold | default(10)
+        )
+      }}
+  vars:
+    checks:
+      - name: filesystem_status_summary
+
+- name: Filesystem health checks
+  ansible.builtin.debug:
+    var: health_checks
+  failed_when: "'FAIL' == health_checks.status"
