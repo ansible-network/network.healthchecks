@@ -37,7 +37,7 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 ```json
 {
     "ansible_facts": {
-        "health_checks": {
+        "health_check": {
             "name": cpu_utilization,
             "details": {
                 "1_min_avg": 0,
