@@ -14,7 +14,7 @@ The `network.healthchecks.memory` role allows monitoring of memory usage on netw
 ## Variables
 | Variable Name   | Default Value | Required | Type  | Description                                      |
 |----------------|--------------|----------|-------|--------------------------------------------------|
-| `memory_threshold` | 80     | no       | int   | Memory usage percentage threshold for health check. |
+| `critical_threshold` | 80     | no       | int   | Memory usage percentage threshold for health check. |
 | `min_free_memory` | 100    | no       | int   | Minimum free memory in MB required for health check. |
 | `min_buffers` | 50     | no       | int   | Minimum buffers in MB required for health check. |
 | `min_cache` | 50     | no       | int   | Minimum cache in MB required for health check. |

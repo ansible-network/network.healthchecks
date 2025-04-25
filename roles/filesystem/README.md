@@ -35,19 +35,16 @@ The `network.healthchecks.filesystem` role allows monitoring of filesystem usage
 ### Output: Filesystem Health Check Status
 ```json
 {
-    "ansible_facts": {
-        "health_checks": {
-            "filesystem": {
-                "check_status": "PASS",
-                "free_percent": 93.42,
-                "threshold": 10,
-                "total": 2001584128,
-                "free": 1869959168
-            },
-            "status": "PASS",
-        }
-    },
-    "changed": false
+    "health_checks": {
+        "filesystem": {
+            "check_status": "PASS",
+            "free_percent": 93.42,
+            "threshold": 10,
+            "total": 2001584128,
+            "free": 1869959168
+        },
+        "status": "PASS"
+    }
 }
 ```
 

@@ -1,29 +1,31 @@
-# network.healthchecks.crash_files
+# network.healthchecks.crashfiles
 
 ## Overview
-The `network.healthchecks.crash_files` role helps in detecting unexpected crash logs or core dumps on network devices. These logs may indicate hardware or software failures. The role provides a comprehensive health check view that shows the status of crash files and overall system health.
+The `network.healthchecks.crashfiles` role allows monitoring of crash files on network devices. This helps detect system crashes and stability issues, ensuring device reliability. The role provides a comprehensive health check view that shows the status of crash files and overall system health.
 
 ## Features
-- Detect crash files or core dumps
-- Generate alerts for crash file presence
+- Monitor presence of crash files
+- Track crash file details
+- Generate alerts for system crashes
 - Provide detailed health check status (PASS/FAIL)
-- Show crash file summary and details
+- Show crash file statistics and information
 
 ## Variables
 | Variable Name   | Default Value | Required | Type  | Description                                      |
 |----------------|--------------|----------|-------|--------------------------------------------------|
-| `log_directory` | `"/var/logs/crash"` | no | str  | Directory path to check for crash files.        |
-| `details` | `false` | no | bool | Whether to include detailed crash file information in output |
+| `details` | false | no | bool | Whether to include detailed crash file information in output |
 
 ## Usage
 
-### Example: Checking for Crash Files
+### Example: Monitoring Crash Files
 ```yaml
-- name: Detect crash files
+- name: Monitor crash files
   ansible.builtin.include_role:
-    name: network.healthchecks.crash_files
+    name: network.healthchecks.crashfiles
   vars:
+    ansible_network_os: cisco.ios.ios
     details: true
+    ignore_errors: false
   register: crash_result
 
 - name: Display crash files health check results
@@ -34,19 +36,30 @@ The `network.healthchecks.crash_files` role helps in detecting unexpected crash 
 ### Output: Crash Files Health Check Status
 ```json
 {
-    "ansible_facts": {
-        "health_checks": {
-            "status": "PASS"
-        }
-    },
-    "changed": false
+    "health_checks": {
+        "crash_files": {
+            "check_status": "PASS",
+            "total_crash_files": 0
+        },
+        "crash_files_summary": {
+            "total_crash_files": 0,
+            "crash_files": []
+        },
+        "status": "PASS"
+    }
 }
 ```
 
 ### Health Check Status
-- `status`: Overall health check status (PASS/FAIL)
-  - PASS: No crash files detected
-  - FAIL: Crash files detected
+- `status`: Overall health check status
+  - `PASS`: No crash files found
+  - `FAIL`: Crash files detected
+- `crash_files`: Crash file metrics
+  - `check_status`: Individual crash files check status
+  - `total_crash_files`: Total number of crash files found
+- `crash_files_summary`: Detailed crash file information
+  - `total_crash_files`: Total number of crash files
+  - `crash_files`: List of crash file details (when details=true)
 
 ## License
 

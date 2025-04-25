@@ -106,7 +106,6 @@ health_checks.yml
             "status": "PASS"
         }
     },
-    "changed": false
 }
 ```
 

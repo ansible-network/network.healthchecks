@@ -36,24 +36,24 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 ### Output: CPU Health Check Status
 ```json
 {
-    "ansible_facts": {
-        "health_check": {
-            "name": cpu_utilization,
-            "details": {
-                "1_min_avg": 0,
-                "5_min_avg": 0,
-                "threshold": 80
-            },
-            "status": "PASS"
-        }
-    },
-    "changed": false
+    "health_checks": {
+        "cpu": {
+            "check_status": "PASS",
+            "1_min_avg": 0,
+            "5_min_avg": 0,
+            "threshold": 80
+        },
+        "status": "PASS"
+    }
 }
 ```
 
 ### Health Check Status
 - `status`: Overall health check status
-- `details`: CPU metrics
+  - `PASS`: CPU utilization is below the threshold
+  - `FAIL`: CPU utilization is above the threshold
+- `cpu`: CPU metrics
+  - `check_status`: Individual CPU check status
   - `1_min_avg`: 1-minute CPU utilization average
   - `5_min_avg`: 5-minute CPU utilization average
   - `threshold`: CPU utilization threshold (default: 80)
