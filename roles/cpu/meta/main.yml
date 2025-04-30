@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  author: Ruchi Pakhle (@Ruchip16)
+  description: >
+    This role performs a CPU health check on Cisco IOS XR devices by executing the
+    "show processes cpu" command and returning the output.
+  license: Apache-2.0
+  min_ansible_version: ">=2.15.0"
+  platforms:
+    - name: Cisco IOS XR
+      versions:
+        - "all"
+dependencies: []

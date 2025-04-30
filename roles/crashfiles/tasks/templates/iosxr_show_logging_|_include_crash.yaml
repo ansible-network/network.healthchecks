@@ -1,0 +1,15 @@
+# fmt: off
+[
+  {
+    "name": "crash_lines",
+    "getval": "(?m)^(?P<line>.*crash.*)$",
+    "result": {
+      "crash_lines": [
+        {
+          "line": "{{ line }}"
+        }
+      ]
+    }
+  }
+]
+# fmt: on

@@ -1,0 +1,3 @@
+---
+# defaults file for network.healthchecks.memory
+memory_free_threshold: 20

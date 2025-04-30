@@ -1,0 +1,12 @@
+---
+- name: Set supported platform list
+  ansible.builtin.set_fact:
+    supported_platforms:
+      - "ios"
+      - "eos"
+      - "nxos"
+      - "iosxr"
+
+- name: Fail on unsupported platform
+  ansible.builtin.include_tasks: "unsupported_platform.yml"
+  when: ansible_network_os.split('.')[-1] not in supported_platforms

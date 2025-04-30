@@ -1,0 +1,20 @@
+# fmt: off
+[
+  {
+    "name": "processes_cpu",
+    "getval": "^(?P<pid>\\d+)\\s+(?P<runtime>\\S+)\\s+(?P<invoked>\\S+)\\s+(?P<usecs>\\S+)\\s+(?P<one_sec>\\S+)%\\s+(?P<process>.+)$",
+    "result": {
+      "cpu_utilization_processes": [
+        {
+          "pid": "{{ pid | int }}",
+          "runtime_ms": "{{ runtime }}",
+          "invoked": "{{ invoked }}",
+          "uSecs": "{{ usecs }}",
+          "one_sec": "{{ one_sec | float }}",
+          "process": "{{ process }}"
+        }
+      ]
+    }
+  }
+]
+# fmt: on

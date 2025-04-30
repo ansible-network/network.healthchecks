@@ -1,0 +1,11 @@
+---
+- name: Parse CPU health check output for IOS
+  ansible.utils.cli_parse:
+    command: "show processes cpu"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: cpu_health
+
+- name: Debug CPU health check output
+  ansible.builtin.debug:
+    var: cpu_health

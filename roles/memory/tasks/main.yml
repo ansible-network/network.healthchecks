@@ -1,0 +1,35 @@
+---
+- name: Include validation tasks (ensure platform is supported)
+  ansible.builtin.include_tasks: validation.yml
+
+- name: Include OS-specific Memory tasks {{ ansible_network_os.split('.')[2] }}
+  ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"
+
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+    health_checks: "{{ memory_health | network.healthchecks.health_check_view(health_check) }}"
+  vars:
+    health_check:
+      name: health_check
+      vars:
+        checks:
+          - name: memory_utilization
+            threshold: "{{ lookup('vars', 'memory_threshold') | default(80) }}"
+          - name: memory_status_summary
+          - name: memory_free
+            min_free: "{{ lookup('vars', 'min_free_memory') | default(100) }}"
+          - name: memory_buffers
+            min_buffers: "{{ lookup('vars', 'min_buffers') | default(50) }}"
+          - name: memory_cache
+            min_cache: "{{ lookup('vars', 'min_cache') | default(50) }}"
+
+- name: Return health check results
+  ansible.builtin.set_fact:
+    memory_health_checks: "{{ health_checks }}"
+
+- name: Verify memory health check results
+  ansible.builtin.assert:
+    that:
+      - memory_health_checks.status == "successful"
+    fail_msg: "Memory health check failed - Overall status is unsuccessful"
+    success_msg: "Memory health check passed - Overall status is successful"

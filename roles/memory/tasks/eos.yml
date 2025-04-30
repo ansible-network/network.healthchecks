@@ -1,0 +1,11 @@
+---
+- name: Parse Memory summary output for EOS
+  ansible.utils.cli_parse:
+    command: "show memory summary"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: memory_health
+
+- name: Debug memory health (EOS)
+  ansible.builtin.debug:
+    var: memory_health

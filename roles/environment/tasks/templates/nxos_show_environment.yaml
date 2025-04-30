@@ -1,0 +1,29 @@
+# fmt: off
+[
+  {
+    "name": "power_status",
+    "getval": "(?m)^(No power info, as no System Controller Module\\(.*\\) is online\\.)",
+    "result": {
+      "power": "{{ _0 }}"
+    }
+  },
+  {
+    "name": "fan_zone_speed",
+    "getval": "(?m)^Fan Zone Speed:\\s*(?P<zone_speed>.+)$",
+    "result": {
+      "fans": {
+         "zone_speed": "{{ zone_speed | trim }}"
+      }
+    }
+  },
+  {
+    "name": "fan_air_filter",
+    "getval": "(?m)^Fan Air Filter\\s*:\\s*(?P<air_filter>.+)$",
+    "result": {
+      "fans": {
+         "air_filter": "{{ air_filter | trim }}"
+      }
+    }
+  }
+]
+# fmt: on

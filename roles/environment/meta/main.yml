@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Ruchi Pakhle (@Ruchip16)
+  description: >
+    This role performs an environmental health check on network devices.
+    For Cisco NX-OS devices, it executes multiple environment commands to monitor
+    environmental parameters like power, temperature, and fan status.
+    For Arista EOS devices, it checks environment, power detail, and power voltage.
+    Note: Environment health check is not supported on Cisco IOS XR devices.
+  license: Apache-2.0
+  min_ansible_version: ">=2.15.0"
+  platforms:
+    - name: Cisco NX-OS
+      versions:
+        - ">= 9.0.0"
+    - name: Arista EOS
+      versions:
+        - ">= 4.2.0"
+dependencies: []

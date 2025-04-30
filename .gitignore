@@ -1,0 +1,6 @@
+.vscode
+.pytest_cache
+__pycache__
+*.pyc
+.ansible
+tests/output

@@ -1,0 +1,11 @@
+---
+- name: Parse uptime output for EOS
+  ansible.utils.cli_parse:
+    command: "show version"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: uptime_parsed
+
+- name: Debug uptime parsed data (EOS)
+  ansible.builtin.debug:
+    var: uptime_parsed

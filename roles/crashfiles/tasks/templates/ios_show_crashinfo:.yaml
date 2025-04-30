@@ -1,0 +1,21 @@
+# fmt: off
+[
+  {
+    "name": "crashinfo_files",
+    "getval": "(?m)^\\s*(?P<number>\\d+)\\s+(?P<size>\\d+)\\s+(?P<month>\\w+)\\s+(?P<day>\\d+)\\s+(?P<year>\\d+)\\s+(?P<time>\\S+)\\s+\\+00:00\\s+(?P<path>\\/.*)$",
+    "result": {
+      "crashinfo_files": [
+        {
+          "number": "{{ number | int }}",
+          "size": "{{ size | int }}",
+          "month": "{{ month }}",
+          "day": "{{ day | int }}",
+          "year": "{{ year | int }}",
+          "time": "{{ time }}",
+          "path": "{{ path }}"
+        }
+      ]
+    }
+  }
+]
+# fmt: on

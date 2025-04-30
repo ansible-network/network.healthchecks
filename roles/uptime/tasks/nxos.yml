@@ -1,0 +1,11 @@
+---
+- name: Parse uptime output for NX-OS
+  ansible.utils.cli_parse:
+    command: "show version | include uptime"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: uptime_parsed
+
+- name: Debug uptime parsed data (NX-OS)
+  ansible.builtin.debug:
+    var: uptime_parsed

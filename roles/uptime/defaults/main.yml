@@ -1,0 +1,4 @@
+---
+# defaults file for network.healthchecks.uptime
+# Define the minimum acceptable uptime in minutes (default: 1440 minutes = 1 day)
+uptime_threshold_minutes: 1440

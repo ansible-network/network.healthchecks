@@ -1,0 +1,40 @@
+# fmt: off
+[
+  {
+    "name": "bgp_instance",
+    "getval": "(?m)^BGP router identifier\\s+(?P<router_id>\\S+),\\s+local AS number\\s+(?P<local_as>\\d+)$",
+    "result": {
+      "router_id": "{{ router_id }}",
+      "local_as": "{{ local_as }}"
+    }
+  },
+  {
+    "name": "bgp_table_versions",
+    "getval": "(?m)^BGP table version is\\s+(?P<bgp_table_version>\\d+),\\s+main routing table version\\s+(?P<route_table_version>\\d+)$",
+    "result": {
+      "bgp_table_version": "{{ bgp_table_version }}",
+      "route_table_version": "{{ route_table_version }}"
+    }
+  },
+  {
+    "name": "neighbors",
+    "getval": "(?m)^(?P<peer>\\d+\\.\\d+\\.\\d+\\.\\d+)\\s+(?P<version>\\d+)\\s+(?P<peer_as>\\d+)\\s+(?P<msg_rcvd>\\d+)\\s+(?P<msg_sent>\\d+)\\s+(?P<tbl_ver>\\d+)\\s+(?P<input_queue>\\d+)\\s+(?P<output_queue>\\d+)\\s+(?P<up_down>\\S+)\\s+(?P<state>\\S+)$",
+    "result": {
+      "neighbors": [
+        {
+          "peer":          "{{ peer }}",
+          "version":       "{{ version | int }}",
+          "peer_as":       "{{ peer_as | int }}",
+          "msg_rcvd":      "{{ msg_rcvd | int }}",
+          "msg_sent":      "{{ msg_sent | int }}",
+          "tbl_ver":       "{{ tbl_ver | int }}",
+          "input_queue":   "{{ input_queue | int }}",
+          "output_queue":  "{{ output_queue | int }}",
+          "up_down":       "{{ up_down }}",
+          "state":         "{{ state }}"
+        }
+      ]
+    }
+  }
+]
+# fmt: on

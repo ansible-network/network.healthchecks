@@ -1,0 +1,4 @@
+---
+# defaults file for network.healthchecks.filesystem
+# Default minimum free percentage (e.g. 10% free space required)
+filesystem_free_threshold: 10

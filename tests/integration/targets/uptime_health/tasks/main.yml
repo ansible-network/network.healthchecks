@@ -1,0 +1,25 @@
+---
+- name: Starting Uptime health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.uptime health check integration tests on connection={{ ansible_connection }}"
+
+- name: Run network.uptime validated content operation
+  block:
+    - name: Run network.uptime validated content with uptime health check operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.uptime
+      vars:
+        details: true
+        warning_below_threshold: 1440  # Warn if uptime is below 1 day (in minutes)
+        critical_below_threshold: 60   # Fail if uptime is below 1 hour (frequent reboot)
+        warning_above_threshold_days: 180  # Warn if uptime exceeds 180 days (e.g., OS patching overdue)
+        critical_above_threshold_days: 365  # Fail if uptime exceeds 1 year (e.g., rollover risk)
+      register: uptime_result
+
+- name: Uptime health check result
+  ansible.builtin.debug:
+    msg: "Uptime Health Check Result: {{ uptime_result }}"
+
+- name: Ending Uptime health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.healthchecks.uptime health check integration tests on connection={{ ansible_connection }}"

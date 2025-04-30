@@ -1,0 +1,11 @@
+---
+- name: Parse Memory usage output for NX-OS
+  ansible.utils.cli_parse:
+    command: "show system resources"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: memory_health
+
+- name: Debug memory health (NX-OS)
+  ansible.builtin.debug:
+    var: memory_health

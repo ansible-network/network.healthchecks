@@ -1,0 +1,17 @@
+# fmt: off
+[
+  {
+    "name": "eos_processor_memory",
+    "getval": "Processor\\s+\\S+\\s+(?P<total>\\d+)\\s+(?P<used>\\d+)\\s+(?P<free>\\d+)\\s+(?P<lowest>\\d+)\\s+(?P<largest>\\d+)",
+    "result": {
+      "processor_memory": {
+        "total": "{{ total | int }}",
+        "used": "{{ used | int }}",
+        "free": "{{ free | int }}",
+        "lowest": "{{ lowest | int }}",
+        "largest": "{{ largest | int }}"
+      }
+    }
+  }
+]
+# fmt: on

@@ -1,0 +1,16 @@
+# fmt: off
+[
+  {
+    "name": "uptime",
+    "getval": "(?m)^Kernel uptime is\\s+(?P<days>\\d+)\\s+day\\(s\\),\\s+(?P<hours>\\d+)\\s+hour\\(s\\),\\s+(?P<minutes>\\d+)\\s+minute\\(s\\),\\s+(?P<seconds>\\d+)\\s+second\\(s\\)",
+    "result": {
+      "uptime": {
+        "days": "{{ days | int }}",
+        "hours": "{{ hours | int }}",
+        "minutes": "{{ minutes | int }}",
+        "seconds": "{{ seconds | int }}"
+      }
+    }
+  }
+]
+# fmt: on

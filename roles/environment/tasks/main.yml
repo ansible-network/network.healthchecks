@@ -1,0 +1,29 @@
+---
+- name: Include validation tasks (ensure target platform is supported)
+  ansible.builtin.include_tasks: validation.yml
+
+- name: Include OS-specific Environment tasks {{ ansible_network_os.split('.')[2] }}
+  ansible.builtin.include_tasks: "./{{ ansible_network_os.split('.')[2] }}.yml"
+
+- name: Debug raw environment health data
+  ansible.builtin.debug:
+    var: env_health
+
+- name: Set health checks fact
+  ansible.builtin.set_fact:
+    health_checks: >-
+      {{
+        env_health | network.healthchecks.health_check_view(
+          checks,
+          details=details | default(false)
+        )
+      }}
+  vars:
+    checks:
+      - name: "environment minimum threshold"
+        environment_temp_threshold: "{{ environment_temp_threshold | default(40) }}"
+
+- name: Environment health checks
+  ansible.builtin.debug:
+    var: health_checks
+  failed_when: "'FAIL' == health_checks.status"

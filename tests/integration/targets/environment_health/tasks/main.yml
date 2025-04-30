@@ -1,0 +1,23 @@
+---
+- name: Starting Environment health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.environment health check integration tests on connection={{ ansible_connection }}"
+
+- name: Run network.environment validated content operation
+  block:
+    - name: Run network.environment validated content with environment health check operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.environment
+      vars:
+        details: true
+        critical_temp_threshold: 40
+        warning_temp_threshold: 30
+      register: env_result
+
+- name: Environment health check result
+  ansible.builtin.debug:
+    msg: "Environment Health Check Result: {{ env_result }}"
+
+- name: Ending Environment health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.healthchecks.environment health check integration tests on connection={{ ansible_connection }}"

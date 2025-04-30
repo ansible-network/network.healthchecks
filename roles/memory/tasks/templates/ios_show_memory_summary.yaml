@@ -1,0 +1,17 @@
+# fmt: off
+[
+  {
+    "name": "processor_memory",
+    "getval": "Processor\\s+\\S+\\s+(?P<total>\\d+)\\s+(?P<used>\\d+)\\s+(?P<free>\\d+)\\s+(?P<lowest>\\d+)\\s+(?P<largest>\\d+)",
+    "result": {
+      "processor_memory": {
+        "lowest": "{{ lowest | int }}",
+        "largest": "{{ largest | int }}",
+        "total_mb": "{{ (total | int) / 1024 / 1024 | round(2) }}",
+        "used_mb":  "{{ (used  | int) / 1024 / 1024 | round(2) }}",
+        "free_mb":  "{{ (free  | int) / 1024 / 1024 | round(2) }}"
+      }
+    }
+  }
+]
+# fmt: on

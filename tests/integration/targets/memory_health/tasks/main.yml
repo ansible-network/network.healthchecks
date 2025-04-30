@@ -1,0 +1,21 @@
+---
+- name: Starting Memory health check integration tests
+  ansible.builtin.debug:
+    msg: "START network.healthchecks.memory health check integration tests on connection={{ ansible_connection }}"
+
+- name: Run memory health check validated content operation
+  block:
+    - name: Run network.memory validated content with memory health check operation
+      ansible.builtin.include_role:
+        name: network.healthchecks.memory
+      vars:
+        critical_threshold: 90
+        warning_threshold: 85
+        min_free_memory_mb: 100
+        min_buffers_mb: 50
+        min_cache_mb: 50
+      register: memory_result
+
+- name: Ending Memory health check integration tests
+  ansible.builtin.debug:
+    msg: "END network.healthchecks.memory health check integration tests on connection={{ ansible_connection }}"

@@ -1,0 +1,16 @@
+# fmt: off
+[
+  {
+    "name": "uptime",
+    "getval": "(?m)^System uptime is\\s+(?:(?P<weeks>\\d+)\\s+weeks?\\s+)?(?P<days>\\d+)\\s+days?\\s+(?P<hours>\\d+)\\s+hours?\\s+(?P<minutes>\\d+)\\s+minutes",
+    "result": {
+      "uptime": {
+        "weeks": "{{ weeks | default(0) | int }}",
+        "days": "{{ days | int }}",
+        "hours": "{{ hours | int }}",
+        "minutes": "{{ minutes | int }}"
+      }
+    }
+  }
+]
+# fmt: on

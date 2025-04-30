@@ -1,0 +1,3 @@
+---
+# defaults file for network.healthchecks.environment
+environment_fan_minimum: "non_zero"    # symbolic value to indicate that fan speed must be non-zero.
