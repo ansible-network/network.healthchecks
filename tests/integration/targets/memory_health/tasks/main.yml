@@ -16,6 +16,11 @@
         min_cache_mb: 50
       register: memory_result
 
+    - name: Assert result has not changed
+      ansible.builtin.assert:
+        that:
+          - memory_result.changed == false
+
 - name: Ending Memory health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.memory health check integration tests on connection={{ ansible_connection }}"

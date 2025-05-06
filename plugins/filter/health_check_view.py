@@ -2,7 +2,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import os
+import yaml
 from ansible.errors import AnsibleFilterError
+from ansible.module_utils.six import string_types
+from ansible.module_utils.common._collections_compat import Mapping
+
+# Load default values from defaults/main.yml
+DEFAULTS_FILE = os.path.join(os.path.dirname(__file__), 'defaults', 'main.yml')
+with open(DEFAULTS_FILE, 'r') as f:
+    DEFAULT_VALUES = yaml.safe_load(f)
 
 DOCUMENTATION = """
     name: health_check_view
@@ -72,7 +81,6 @@ RETURN = """
     type: dict
 """
 
-
 def health_check_view(*args, **kwargs):
     params = ["health_facts", "target"]
     data = dict(zip(params, args))
@@ -84,9 +92,14 @@ def health_check_view(*args, **kwargs):
         )
 
     health_facts = data["health_facts"] or {}
+    # Merge defaults with health_facts
+    for key, value in DEFAULT_VALUES.items():
+        if key not in health_facts:
+            health_facts[key] = value
+
     target = data["target"]
     health_checks = {}
-    health_checks['status'] = 'PASS'
+    health_checks['result'] = 'PASS'
 
     # Handle CPU health checks
     if isinstance(target, list):
@@ -97,13 +110,18 @@ def health_check_view(*args, **kwargs):
         if 'fs_health' in health_facts:
             # Handle nested fs_health structure
             fs_data = health_facts['fs_health'].get('fs_health', {})
-            free_percent = (fs_data.get('free', 0) / fs_data.get('total', 1)) * 100
-            free_threshold = kwargs.get('filesystem_free_threshold', 10)
+            free_percent = (fs_data.get('free') / fs_data.get('total')) * 100
+            free_threshold = kwargs.get('filesystem_free_threshold', health_facts.get('filesystem_free_threshold'))
+            
+            if not free_threshold:
+                raise AnsibleFilterError(
+                    "Missing required filesystem_free_threshold value. Please provide it in the playbook or defaults."
+                )
             
             if free_percent < free_threshold:
-                health_checks['status'] = 'FAIL'
+                health_checks['result'] = 'FAIL'
                 health_checks['filesystem'] = {
-                    'check_status': 'FAIL',
+                    'status': 'FAIL',
                     'free_percent': round(free_percent, 2),
                     'threshold': free_threshold,
                     'total': fs_data.get('total', 0),
@@ -111,7 +129,7 @@ def health_check_view(*args, **kwargs):
                 }
             else:
                 health_checks['filesystem'] = {
-                    'check_status': 'PASS',
+                    'status': 'PASS',
                     'free_percent': round(free_percent, 2),
                     'threshold': free_threshold,
                     'total': fs_data.get('total', 0),
@@ -123,83 +141,93 @@ def health_check_view(*args, **kwargs):
                 health_checks['details'] = fs_data
 
         # CPU Health Checks
-        if data['cpu_summary']:
+        if data['cpu_utilization']:
             # Handle NX-OS CPU structure
             if 'cpu_usage' in health_facts and isinstance(health_facts['cpu_usage'], dict):
                 cpu_usage = health_facts['cpu_usage']
                 current_util = cpu_usage.get('five_minute', 0)
-                cpu_summary = {
-                    '1_min_avg': cpu_usage.get('one_minute', 0),
-                    '5_min_avg': cpu_usage.get('five_minute', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             # Handle IOS-XR CPU structure
             elif 'cpu' in health_facts and isinstance(health_facts['cpu'], dict):
                 cpu = health_facts['cpu']
                 current_util = cpu.get('5_min_avg', 0)
-                cpu_summary = {
-                    '1_min_avg': cpu.get('1_min_avg', 0),
-                    '5_min_avg': cpu.get('5_min_avg', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             # Handle IOS CPU structure
             elif 'global' in health_facts:
                 cpu_summary = health_facts.get('global', {})
                 current_util = cpu_summary.get('five_minute', 0)
-                cpu_summary = {
-                    '1_min_avg': cpu_summary.get('one_minute', 0),
-                    '5_min_avg': cpu_summary.get('five_minute', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             # Handle NX-OS raw CPU data
             elif 'processes' in health_facts and isinstance(health_facts['processes'], dict):
                 processes = health_facts['processes']
                 current_util = processes.get('five_minute', 0)
-                cpu_summary = {
-                    '1_min_avg': processes.get('one_minute', 0),
-                    '5_min_avg': processes.get('five_minute', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             else:
                 current_util = 0
-                cpu_summary = {
-                    '1_min_avg': 0,
-                    '5_min_avg': 0,
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
 
             # Set status based on thresholds
-            if current_util >= kwargs.get('critical_threshold', 95):
-                health_checks['status'] = 'FAIL'
-            elif current_util >= kwargs.get('warning_threshold', 85):
-                health_checks['status'] = 'WARNING'
+            warning_threshold = kwargs.get('warning_threshold')
+            critical_threshold = kwargs.get('critical_threshold')
+            
+            if not warning_threshold or not critical_threshold:
+                raise AnsibleFilterError(
+                    "Missing required threshold values. Please provide warning_threshold and critical_threshold in the playbook."
+                )
+            
+            if current_util >= critical_threshold:
+                health_checks['result'] = 'FAIL'
+                status = 'FAIL'
+            elif current_util >= warning_threshold:
+                health_checks['result'] = 'WARNING'
+                status = 'WARNING'
+            else:
+                status = 'PASS'
+
+            # Add CPU utilization to health checks with exact README format
+            health_checks['cpu_utilization'] = {
+                'status': status,
+                '1_min_avg': current_util,
+                '5_min_avg': current_util,
+                'threshold': warning_threshold
+            }
 
             # Always include details if details flag is True
             if kwargs.get('details', False):
-                health_checks['details'] = cpu_summary
+                health_checks['details'] = {
+                    '1_min_avg': current_util,
+                    '5_min_avg': current_util,
+                    'threshold': warning_threshold
+                }
 
         # Environment Health Checks
         if any(check['name'] in ['environment_minimum_threshold'] for check in checks):
             env_health = health_facts.get('env_health', {})
-            temp_threshold = next((check.get('environment_temp_threshold', 40) for check in checks if check['name'] == 'environment_minimum_threshold'), 40)
+            temp_threshold = next((check.get('environment_temp_threshold', health_facts.get('environment_temp_threshold')) 
+                                 for check in checks if check['name'] == 'environment_minimum_threshold'), 
+                                 health_facts.get('environment_temp_threshold'))
+
+            if not temp_threshold:
+                raise AnsibleFilterError(
+                    "Missing required environment_temp_threshold value. Please provide it in the playbook or defaults."
+                )
 
             # Check temperature if available
             if 'temperature' in env_health:
-                current_temp = env_health['temperature'].get('current_temp', 0)
+                current_temp = env_health['temperature'].get('current_temp')
                 if current_temp > temp_threshold:
-                    health_checks['status'] = 'FAIL'
+                    health_checks['result'] = 'FAIL'
 
             # Check fan status
             if 'fans' in env_health:
                 fan_status = env_health['fans'].get('status', '')
                 if fan_status and fan_status.lower() != 'ok':
-                    health_checks['status'] = 'FAIL'
+                    health_checks['result'] = 'FAIL'
 
             # Check power supply if available
             if 'power' in env_health:
                 power_status = env_health['power'].get('status', '')
                 if power_status and power_status.lower() != 'ok':
-                    health_checks['status'] = 'FAIL'
+                    health_checks['result'] = 'FAIL'
 
             # Always include details if details flag is True
             if kwargs.get('details', False):
@@ -237,9 +265,9 @@ def health_check_view(*args, **kwargs):
                     if check['name'] == 'crash_files':
                         n_dict = {}
                         n_dict['total_crash_files'] = len(crash_files)
-                        n_dict['check_status'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        n_dict['status'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'crash_files_summary':
                         n_dict = {
@@ -254,45 +282,67 @@ def health_check_view(*args, **kwargs):
                 for check in checks:
                     if check['name'] == 'memory_utilization':
                         n_dict = {}
-                        total_mb = float(memory_stats.get('total_mb', 0))
-                        used_mb = float(memory_stats.get('used_mb', 0))
-                        utilization = (used_mb / total_mb * 100) if total_mb > 0 else 0
+                        total_mb = float(memory_stats.get('total_mb'))
+                        used_mb = float(memory_stats.get('used_mb'))
+                        utilization = (used_mb / total_mb * 100)
                         n_dict['current_utilization'] = round(utilization, 2)
-                        n_dict['threshold'] = float(check.get('threshold', 80))
-                        n_dict['check_status'] = 'PASS' if utilization <= n_dict['threshold'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        threshold = check.get('threshold', health_facts.get('memory_utilization_threshold'))
+                        if not threshold:
+                            raise AnsibleFilterError(
+                                "Missing required memory utilization threshold. Please provide it in the playbook or defaults."
+                            )
+                        n_dict['threshold'] = float(threshold)
+                        n_dict['status'] = 'PASS' if utilization <= n_dict['threshold'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_status_summary':
                         n_dict = {
-                            'total_mb': round(float(memory_stats.get('total_mb', 0)), 2),
-                            'used_mb': round(float(memory_stats.get('used_mb', 0)), 2),
-                            'free_mb': round(float(memory_stats.get('free_mb', 0)), 2)
+                            'total_mb': round(float(memory_stats.get('total_mb')), 2),
+                            'used_mb': round(float(memory_stats.get('used_mb')), 2),
+                            'free_mb': round(float(memory_stats.get('free_mb')), 2),
+                            'buffers_mb': round(float(memory_stats.get('buffers_mb')), 2),
+                            'cache_mb': round(float(memory_stats.get('cache_mb')), 2)
                         }
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_free':
                         n_dict = {}
                         n_dict['current_free'] = round(float(memory_stats.get('free_mb', 0)), 2)
-                        n_dict['min_free'] = float(check.get('min_free', 100))
-                        n_dict['check_status'] = 'PASS' if n_dict['current_free'] >= n_dict['min_free'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        min_free = check.get('min_free', health_facts.get('memory_min_free'))
+                        if not min_free:
+                            raise AnsibleFilterError(
+                                "Missing required min_free value for memory_free check. Please provide it in the playbook or defaults."
+                            )
+                        n_dict['min_free'] = float(min_free)
+                        n_dict['status'] = 'PASS' if n_dict['current_free'] >= n_dict['min_free'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_buffers':
                         n_dict = {}
                         n_dict['current_buffers'] = round(float(memory_stats.get('buffers_mb', 0)), 2)
-                        n_dict['min_buffers'] = float(check.get('min_buffers', 50))
-                        n_dict['check_status'] = 'PASS' if n_dict['current_buffers'] >= n_dict['min_buffers'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        min_buffers = check.get('min_buffers', health_facts.get('memory_min_buffers'))
+                        if not min_buffers:
+                            raise AnsibleFilterError(
+                                "Missing required min_buffers value for memory_buffers check. Please provide it in the playbook or defaults."
+                            )
+                        n_dict['min_buffers'] = float(min_buffers)
+                        n_dict['status'] = 'PASS' if n_dict['current_buffers'] >= n_dict['min_buffers'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_cache':
                         n_dict = {}
                         n_dict['current_cache'] = round(float(memory_stats.get('cache_mb', 0)), 2)
-                        n_dict['min_cache'] = float(check.get('min_cache', 50))
-                        n_dict['check_status'] = 'PASS' if n_dict['current_cache'] >= n_dict['min_cache'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        min_cache = check.get('min_cache', health_facts.get('memory_min_cache'))
+                        if not min_cache:
+                            raise AnsibleFilterError(
+                                "Missing required min_cache value for memory_cache check. Please provide it in the playbook or defaults."
+                            )
+                        n_dict['min_cache'] = float(min_cache)
+                        n_dict['status'] = 'PASS' if n_dict['current_cache'] >= n_dict['min_cache'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
 
             # Handle BGP health checks
@@ -310,9 +360,9 @@ def health_check_view(*args, **kwargs):
                 if vars.get('details'):
                     details['neighbors'] = health_facts['neighbors']
                     n_dict['details'] = details
-                n_dict['check_status'] = 'PASS' if stats['total'] == stats['up'] else 'FAIL'
-                if n_dict['check_status'] == 'FAIL' and not data['all_up'].get('ignore_errors'):
-                    health_checks['status'] = 'FAIL'
+                n_dict['status'] = 'PASS' if stats['total'] == stats['up'] else 'FAIL'
+                if n_dict['status'] == 'FAIL' and not data['all_up'].get('ignore_errors'):
+                    health_checks['result'] = 'FAIL'
                 health_checks[data['all_up'].get('name')] = n_dict
 
             if data.get('all_down'):
@@ -322,9 +372,9 @@ def health_check_view(*args, **kwargs):
                 if vars.get('details'):
                     details['neighbors'] = health_facts['neighbors']
                     n_dict['details'] = details
-                n_dict['check_status'] = 'PASS' if stats['total'] == stats['down'] else 'FAIL'
-                if n_dict['check_status'] == 'FAIL' and not data['all_down'].get('ignore_errors'):
-                    health_checks['status'] = 'FAIL'
+                n_dict['status'] = 'PASS' if stats['total'] == stats['down'] else 'FAIL'
+                if n_dict['status'] == 'FAIL' and not data['all_down'].get('ignore_errors'):
+                    health_checks['result'] = 'FAIL'
                 health_checks[data['all_down'].get('name')] = n_dict
 
             if data.get('min_up'):
@@ -334,16 +384,14 @@ def health_check_view(*args, **kwargs):
                 if vars.get('details'):
                     details['neighbors'] = health_facts['neighbors']
                     n_dict['details'] = details
-                n_dict['check_status'] = 'PASS' if data['min_up']['min_count'] <= stats['up'] else 'FAIL'
-                if n_dict['check_status'] == 'FAIL' and not data['min_up'].get('ignore_errors'):
-                    health_checks['status'] = 'FAIL'
+                n_dict['status'] = 'PASS' if data['min_up']['min_count'] <= stats['up'] else 'FAIL'
+                if n_dict['status'] == 'FAIL' and not data['min_up'].get('ignore_errors'):
+                    health_checks['result'] = 'FAIL'
                 health_checks[data['min_up'].get('name')] = n_dict
 
             # Update overall status
-            if any(check.get('check_status') == 'FAIL' for check in health_checks.values() if isinstance(check, dict)):
-                health_checks['status'] = 'FAIL'
-            else:
-                health_checks['status'] = 'PASS'
+            if any(check.get('status') == 'FAIL' for check in health_checks.values() if isinstance(check, dict)):
+                health_checks['result'] = 'FAIL'
         else:
             health_checks = health_facts
     return health_checks
@@ -367,7 +415,7 @@ def get_bgp_health(checks):
 
 def get_health(checks):
     dict = {}
-    dict['cpu_summary'] = is_present(checks, 'cpu_status_summary')
+    dict['cpu_utilization'] = is_present(checks, 'cpu_utilization')
     return dict
 
 

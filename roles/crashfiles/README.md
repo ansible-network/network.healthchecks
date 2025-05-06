@@ -38,28 +38,21 @@ The `network.healthchecks.crashfiles` role allows monitoring of crash files on n
 {
     "health_checks": {
         "crash_files": {
-            "check_status": "PASS",
+            "status": "PASS",
             "total_crash_files": 0
         },
-        "crash_files_summary": {
-            "total_crash_files": 0,
-            "crash_files": []
-        },
-        "status": "PASS"
+        "result": "PASS"
     }
 }
 ```
 
 ### Health Check Status
-- `status`: Overall health check status
+- `result`: Overall health check result
   - `PASS`: No crash files found
   - `FAIL`: Crash files detected
 - `crash_files`: Crash file metrics
-  - `check_status`: Individual crash files check status
+  - `status`: Individual crash files check status
   - `total_crash_files`: Total number of crash files found
-- `crash_files_summary`: Detailed crash file information
-  - `total_crash_files`: Total number of crash files
-  - `crash_files`: List of crash file details (when details=true)
 
 ## License
 

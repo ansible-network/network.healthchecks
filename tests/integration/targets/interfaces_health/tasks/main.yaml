@@ -22,6 +22,11 @@
                 min_count: 1
       register: interfaces_result
 
+    - name: Assert result has not changed
+      ansible.builtin.assert:
+        that:
+          - interfaces_result.changed == false
+
 - name: Debug
   ansible.builtin.debug:
     msg: "END network.interfaces health_check role integration tests on connection={{ ansible_connection }}"

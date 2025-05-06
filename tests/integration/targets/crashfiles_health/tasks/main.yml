@@ -19,6 +19,11 @@
         details: true
       register: crash_result
 
+    - name: Assert result has not changed
+      ansible.builtin.assert:
+        that:
+          - crash_result.changed == false
+
 - name: Ending Crash Files health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.crash_files health check integration tests on connection={{ ansible_connection }}"

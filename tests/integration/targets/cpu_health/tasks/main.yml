@@ -9,10 +9,16 @@
       ansible.builtin.include_role:
         name: network.healthchecks.cpu
       vars:
-        details: true
-        warning_threshold: 90
-        critical_threshold: 95
-      register: cpu_result
+        cpu_utilization:
+          details: true
+          warning_threshold: 90
+          critical_threshold: 95
+      register: result
+
+    - name: Assert result has not changed
+      ansible.builtin.assert:
+        that:
+          - result.changed == false
 
 - name: Debug
   ansible.builtin.debug:

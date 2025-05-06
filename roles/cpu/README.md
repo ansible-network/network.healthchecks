@@ -19,14 +19,15 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 
 ### Example: Monitoring CPU Usage
 ```yaml
-- name: Monitor CPU utilization
+- name: Run network.cpu validated content with health_checks operation
   ansible.builtin.include_role:
     name: network.healthchecks.cpu
   vars:
-    ansible_network_os: cisco.ios.ios
-    cpu_threshold: 80
-    ignore_errors: false
-  register: cpu_result
+    cpu_utilization:
+      details: true
+      warning_threshold: 90
+      critical_threshold: 95
+  register: result
 
 - name: Display CPU health check results
   ansible.builtin.debug:
@@ -37,23 +38,23 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 ```json
 {
     "health_checks": {
-        "cpu": {
-            "check_status": "PASS",
+        "cpu_utilization": {
+            "status": "PASS",
             "1_min_avg": 0,
             "5_min_avg": 0,
             "threshold": 80
         },
-        "status": "PASS"
+        "result": "PASS"
     }
 }
 ```
 
 ### Health Check Status
-- `status`: Overall health check status
+- `result`: Overall health check result
   - `PASS`: CPU utilization is below the threshold
   - `FAIL`: CPU utilization is above the threshold
-- `cpu`: CPU metrics
-  - `check_status`: Individual CPU check status
+- `cpu_utilization`: CPU metrics
+  - `status`: Individual CPU check status
   - `1_min_avg`: 1-minute CPU utilization average
   - `5_min_avg`: 5-minute CPU utilization average
   - `threshold`: CPU utilization threshold (default: 80)

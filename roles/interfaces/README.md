@@ -39,7 +39,7 @@ The role enables users to perform interface health checks on network devices. It
 {
     "health_checks": {
         "all_admin_state_up": {
-            "check_status": "FAIL",
+            "status": "FAIL",
             "interfaces_status_summery": {
                 "admin_down": 1,
                 "admin_up": 5,
@@ -49,7 +49,7 @@ The role enables users to perform interface health checks on network devices. It
             }
         },
         "all_operational_state_up": {
-            "check_status": "FAIL",
+            "status": "FAIL",
             "interfaces_status_summery": {
                 "admin_down": 1,
                 "admin_up": 5,
@@ -112,7 +112,7 @@ The role enables users to perform interface health checks on network devices. It
                 "up": 5
             }
         },
-        "status": "FAIL"
+        "result": "FAIL"
     }
 }
 ```

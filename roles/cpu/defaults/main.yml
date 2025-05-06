@@ -1,4 +1,5 @@
 ---
 # defaults file for network.healthchecks.cpu
-# Default CPU threshold percentage
-cpu_threshold: 80
+# Default CPU threshold percentages
+cpu_warning_threshold: 85
+cpu_critical_threshold: 95

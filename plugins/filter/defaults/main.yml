@@ -1,0 +1,23 @@
+---
+# defaults file for network.healthchecks filter plugin
+# CPU thresholds
+cpu_warning_threshold: 85
+cpu_critical_threshold: 95
+
+# Filesystem thresholds
+filesystem_free_threshold: 10
+
+# Environment thresholds
+environment_temp_threshold: 40
+
+# Memory thresholds
+memory_utilization_threshold: 80
+memory_min_free: 100
+memory_min_buffers: 50
+memory_min_cache: 50 
+
+# Uptime thresholds
+uptime_warning_below_threshold: 1440
+uptime_critical_below_threshold: 60
+uptime_warning_above_threshold_days: 180
+uptime_critical_above_threshold_days: 365

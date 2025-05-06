@@ -45,7 +45,7 @@ The `network.healthchecks.bgp` role helps in monitoring BGP (Border Gateway Prot
 {
     "health_checks": {
         "all_neighbors_down": {
-            "check_status": "PASS",
+            "status": "FAIL",
             "details": {
                 "neighbors": [
                     {
@@ -62,7 +62,7 @@ The `network.healthchecks.bgp` role helps in monitoring BGP (Border Gateway Prot
             "up": 0
         },
         "all_neighbors_up": {
-            "check_status": "FAIL",
+            "status": "PASS",
             "details": {
                 "neighbors": [
                     {
@@ -79,7 +79,7 @@ The `network.healthchecks.bgp` role helps in monitoring BGP (Border Gateway Prot
             "up": 0
         },
         "min_neighbors_up": {
-            "check_status": "FAIL",
+            "status": "PASS",
             "details": {
                 "neighbors": [
                     {
@@ -95,17 +95,17 @@ The `network.healthchecks.bgp` role helps in monitoring BGP (Border Gateway Prot
             "total": 1,
             "up": 0
         },
-        "status": "FAIL"
+        "result": "PASS"
     }
 }
 ```
 
 ### Health Check Status
-- `status`: Overall health check status (PASS/FAIL)
+- `result`: Overall health check result (PASS/FAIL)
   - PASS: All BGP neighbors are in Established state
   - FAIL: Any BGP neighbor is not in Established state
 - `all_neighbors_up`: Check for all neighbors being up
-  - `check_status`: Status of the check (PASS/FAIL)
+  - `status`: Status of the check (PASS/FAIL)
   - `up`: Number of neighbors in Established state
   - `down`: Number of neighbors not in Established state
   - `total`: Total number of configured neighbors

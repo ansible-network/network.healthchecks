@@ -20,6 +20,11 @@
   ansible.builtin.debug:
     msg: "Uptime Health Check Result: {{ uptime_result }}"
 
+- name: Assert result has not changed
+  ansible.builtin.assert:
+    that:
+      - uptime_result.changed == false
+
 - name: Ending Uptime health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.uptime health check integration tests on connection={{ ansible_connection }}"

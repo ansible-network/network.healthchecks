@@ -16,6 +16,11 @@
   ansible.builtin.debug:
     msg: "Filesystem Health Check Result: {{ fs_result }}"
 
+- name: Assert result has not changed
+  ansible.builtin.assert:
+    that:
+      - fs_result.changed == false
+
 - name: Ending Filesystem health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.filesystem health check integration tests on connection={{ ansible_connection }}"

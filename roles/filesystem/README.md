@@ -37,27 +37,27 @@ The `network.healthchecks.filesystem` role allows monitoring of filesystem usage
 {
     "health_checks": {
         "filesystem": {
-            "check_status": "PASS",
+            "status": "PASS",
             "free_percent": 93.42,
             "threshold": 10,
-            "total": 2001584128,
-            "free": 1869959168
+            "total_kb": 2001584128,
+            "free_kb": 1869959168
         },
-        "status": "PASS"
+        "result": "PASS"
     }
 }
 ```
 
 ### Health Check Status
-- `status`: Overall health check status
+- `result`: Overall health check status
   - `PASS`: Free space is above the threshold
   - `FAIL`: Free space is below the threshold
 - `filesystem`: Filesystem metrics
-  - `check_status`: Individual filesystem check status
+  - `status`: Individual filesystem check status
   - `free_percent`: Current free space percentage
   - `threshold`: Configured free space threshold
-  - `total`: Total filesystem space in bytes
-  - `free`: Free filesystem space in bytes
+  - `total_kb`: Total filesystem space in bytes
+  - `free_kb`: Free filesystem space in bytes
 
 ## License
 

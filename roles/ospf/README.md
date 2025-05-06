@@ -56,7 +56,7 @@ health_checks.yml
     "ansible_facts": {
         "health_checks": {
             "all_neighbors_down": {
-                "check_status": "FAIL",
+                "status": "FAIL",
                 "details": {
                     "neighbors": [
                         {
@@ -72,7 +72,7 @@ health_checks.yml
                 "up": 1
             },
             "all_neighbors_up": {
-                "check_status": "PASS",
+                "status": "PASS",
                 "details": {
                     "neighbors": [
                         {
@@ -88,7 +88,7 @@ health_checks.yml
                 "up": 1
             },
             "min_neighbors_up": {
-                "check_status": "PASS",
+                "status": "PASS",
                 "details": {
                     "neighbors": [
                         {
@@ -103,15 +103,27 @@ health_checks.yml
                 "total": 1,
                 "up": 1
             },
-            "status": "PASS"
+            "result": "PASS"
         }
     },
 }
 ```
+### Health Check Status
+- `result`: Overall health check result (PASS/FAIL)
+  - PASS: All OSPF neighbors are in the desired state
+  - FAIL: Any OSPF neighbor is not in the desired state
+- `all_neighbors_up`, `all_neighbors_down`, `min_neighbors_up`:
+  - `status`: Status of the check (PASS/FAIL)
+  - `details`: Neighbor details
+  - `up`, `down`, `total`: Neighbor counts
+
 
 ## License
+
 GNU General Public License v3.0 or later.
+
 See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
 
 ## Author Information
+
 - Ansible Network Content Team
