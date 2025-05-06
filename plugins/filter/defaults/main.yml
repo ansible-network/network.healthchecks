@@ -15,3 +15,9 @@ memory_utilization_threshold: 80
 memory_min_free: 100
 memory_min_buffers: 50
 memory_min_cache: 50 
+
+# Uptime thresholds
+uptime_warning_below_threshold: 1440
+uptime_critical_below_threshold: 60
+uptime_warning_above_threshold_days: 180
+uptime_critical_above_threshold_days: 365

@@ -1,8 +1,0 @@
----
-health_checks:
-  cpu_utilization:
-    1_min_avg: 0
-    5_min_avg: 0
-    status: "PASS"
-    threshold: 85
-  result: "PASS"
