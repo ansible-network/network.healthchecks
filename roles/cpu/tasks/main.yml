@@ -16,15 +16,15 @@
         cpu_health | network.healthchecks.health_check_view(
           checks,
           details=details | default(false),
-          warning_threshold=warning_threshold | default(85),
-          critical_threshold=critical_threshold | default(95)
+          warning_threshold=warning_threshold | default(cpu_warning_threshold),
+          critical_threshold=critical_threshold | default(cpu_critical_threshold)
         )
       }}
   vars:
     checks:
-      - name: cpu_status_summary
+      - name: cpu_utilization
 
 - name: CPU health checks
   ansible.builtin.debug:
     var: health_checks
-  failed_when: "'FAIL' == health_checks.status"
+  failed_when: "'FAIL' == health_checks.result"

@@ -1,10 +1,10 @@
 # fmt: off
 [
   {
-    "name": "cpu_status_summary",
+    "name": "cpu_utilization",
     "getval": "(?m)^CPU utilization for five seconds:\\s*\\d+%/\\d+%;\\s*one minute:\\s*(?P<one_min>\\d+)%?;\\s*five minutes:\\s*(?P<five_min>\\d+)%?",
     "result": {
-      "cpu_status_summary": {
+      "cpu_utilization": {
         "1_min_avg": "{{ one_min | int }}",
         "5_min_avg": "{{ five_min | int }}"
       }

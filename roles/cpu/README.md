@@ -19,14 +19,15 @@ The `network.healthchecks.cpu` role allows monitoring of CPU usage on network de
 
 ### Example: Monitoring CPU Usage
 ```yaml
-- name: Monitor CPU utilization
+- name: Run network.cpu validated content with health_checks operation
   ansible.builtin.include_role:
     name: network.healthchecks.cpu
   vars:
-    ansible_network_os: cisco.ios.ios
-    cpu_threshold: 80
-    ignore_errors: false
-  register: cpu_result
+    cpu_utilization:
+      details: true
+      warning_threshold: 90
+      critical_threshold: 95
+  register: result
 
 - name: Display CPU health check results
   ansible.builtin.debug:

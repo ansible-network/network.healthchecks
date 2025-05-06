@@ -3,6 +3,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible.errors import AnsibleFilterError
+from ansible.module_utils.six import string_types
+from ansible.module_utils.common._collections_compat import Mapping
 
 DOCUMENTATION = """
     name: health_check_view
@@ -72,7 +74,6 @@ RETURN = """
     type: dict
 """
 
-
 def health_check_view(*args, **kwargs):
     params = ["health_facts", "target"]
     data = dict(zip(params, args))
@@ -123,60 +124,58 @@ def health_check_view(*args, **kwargs):
                 health_checks['details'] = fs_data
 
         # CPU Health Checks
-        if data['cpu_summary']:
+        if data['cpu_utilization']:
             # Handle NX-OS CPU structure
             if 'cpu_usage' in health_facts and isinstance(health_facts['cpu_usage'], dict):
                 cpu_usage = health_facts['cpu_usage']
                 current_util = cpu_usage.get('five_minute', 0)
-                cpu_summary = {
-                    '1_min_avg': cpu_usage.get('one_minute', 0),
-                    '5_min_avg': cpu_usage.get('five_minute', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             # Handle IOS-XR CPU structure
             elif 'cpu' in health_facts and isinstance(health_facts['cpu'], dict):
                 cpu = health_facts['cpu']
                 current_util = cpu.get('5_min_avg', 0)
-                cpu_summary = {
-                    '1_min_avg': cpu.get('1_min_avg', 0),
-                    '5_min_avg': cpu.get('5_min_avg', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             # Handle IOS CPU structure
             elif 'global' in health_facts:
                 cpu_summary = health_facts.get('global', {})
                 current_util = cpu_summary.get('five_minute', 0)
-                cpu_summary = {
-                    '1_min_avg': cpu_summary.get('one_minute', 0),
-                    '5_min_avg': cpu_summary.get('five_minute', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             # Handle NX-OS raw CPU data
             elif 'processes' in health_facts and isinstance(health_facts['processes'], dict):
                 processes = health_facts['processes']
                 current_util = processes.get('five_minute', 0)
-                cpu_summary = {
-                    '1_min_avg': processes.get('one_minute', 0),
-                    '5_min_avg': processes.get('five_minute', 0),
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
+                
             else:
                 current_util = 0
-                cpu_summary = {
-                    '1_min_avg': 0,
-                    '5_min_avg': 0,
-                    'threshold': kwargs.get('warning_threshold', 85)
-                }
 
             # Set status based on thresholds
-            if current_util >= kwargs.get('critical_threshold', 95):
+            warning_threshold = kwargs.get('warning_threshold', health_facts.get('cpu_warning_threshold', 85))
+            critical_threshold = kwargs.get('critical_threshold', health_facts.get('cpu_critical_threshold', 95))
+            
+            if current_util >= critical_threshold:
                 health_checks['result'] = 'FAIL'
-            elif current_util >= kwargs.get('warning_threshold', 85):
+                status = 'FAIL'
+            elif current_util >= warning_threshold:
                 health_checks['result'] = 'WARNING'
+                status = 'WARNING'
+            else:
+                status = 'PASS'
+
+            # Add CPU utilization to health checks with exact README format
+            health_checks['cpu_utilization'] = {
+                'status': status,
+                '1_min_avg': current_util,
+                '5_min_avg': current_util,
+                'threshold': warning_threshold
+            }
 
             # Always include details if details flag is True
             if kwargs.get('details', False):
-                health_checks['details'] = cpu_summary
+                health_checks['details'] = {
+                    '1_min_avg': current_util,
+                    '5_min_avg': current_util,
+                    'threshold': warning_threshold
+                }
 
         # Environment Health Checks
         if any(check['name'] in ['environment_minimum_threshold'] for check in checks):
@@ -367,7 +366,7 @@ def get_bgp_health(checks):
 
 def get_health(checks):
     dict = {}
-    dict['cpu_summary'] = is_present(checks, 'cpu_status_summary')
+    dict['cpu_utilization'] = is_present(checks, 'cpu_utilization')
     return dict
 
 
