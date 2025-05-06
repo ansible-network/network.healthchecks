@@ -99,7 +99,12 @@ def health_check_view(*args, **kwargs):
             # Handle nested fs_health structure
             fs_data = health_facts['fs_health'].get('fs_health', {})
             free_percent = (fs_data.get('free', 0) / fs_data.get('total', 1)) * 100
-            free_threshold = kwargs.get('filesystem_free_threshold', 10)
+            free_threshold = kwargs.get('filesystem_free_threshold')
+            
+            if not free_threshold:
+                raise AnsibleFilterError(
+                    "Missing required filesystem_free_threshold value. Please provide it in the playbook."
+                )
             
             if free_percent < free_threshold:
                 health_checks['result'] = 'FAIL'
@@ -149,8 +154,13 @@ def health_check_view(*args, **kwargs):
                 current_util = 0
 
             # Set status based on thresholds
-            warning_threshold = kwargs.get('warning_threshold', health_facts.get('cpu_warning_threshold', 85))
-            critical_threshold = kwargs.get('critical_threshold', health_facts.get('cpu_critical_threshold', 95))
+            warning_threshold = kwargs.get('warning_threshold')
+            critical_threshold = kwargs.get('critical_threshold')
+            
+            if not warning_threshold or not critical_threshold:
+                raise AnsibleFilterError(
+                    "Missing required threshold values. Please provide warning_threshold and critical_threshold in the playbook."
+                )
             
             if current_util >= critical_threshold:
                 health_checks['result'] = 'FAIL'
@@ -257,7 +267,7 @@ def health_check_view(*args, **kwargs):
                         used_mb = float(memory_stats.get('used_mb', 0))
                         utilization = (used_mb / total_mb * 100) if total_mb > 0 else 0
                         n_dict['current_utilization'] = round(utilization, 2)
-                        n_dict['threshold'] = float(check.get('threshold', 80))
+                        n_dict['threshold'] = float(check.get('threshold', health_facts.get('cpu_warning_threshold', 85)))
                         n_dict['status'] = 'PASS' if utilization <= n_dict['threshold'] else 'FAIL'
                         if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
                             health_checks['result'] = 'FAIL'
@@ -274,7 +284,12 @@ def health_check_view(*args, **kwargs):
                     elif check['name'] == 'memory_free':
                         n_dict = {}
                         n_dict['current_free'] = round(float(memory_stats.get('free_mb', 0)), 2)
-                        n_dict['min_free'] = float(check.get('min_free', 100))
+                        min_free = check.get('min_free')
+                        if not min_free:
+                            raise AnsibleFilterError(
+                                "Missing required min_free value for memory_free check. Please provide it in the playbook."
+                            )
+                        n_dict['min_free'] = float(min_free)
                         n_dict['status'] = 'PASS' if n_dict['current_free'] >= n_dict['min_free'] else 'FAIL'
                         if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
                             health_checks['result'] = 'FAIL'
@@ -282,7 +297,12 @@ def health_check_view(*args, **kwargs):
                     elif check['name'] == 'memory_buffers':
                         n_dict = {}
                         n_dict['current_buffers'] = round(float(memory_stats.get('buffers_mb', 0)), 2)
-                        n_dict['min_buffers'] = float(check.get('min_buffers', 50))
+                        min_buffers = check.get('min_buffers')
+                        if not min_buffers:
+                            raise AnsibleFilterError(
+                                "Missing required min_buffers value for memory_buffers check. Please provide it in the playbook."
+                            )
+                        n_dict['min_buffers'] = float(min_buffers)
                         n_dict['status'] = 'PASS' if n_dict['current_buffers'] >= n_dict['min_buffers'] else 'FAIL'
                         if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
                             health_checks['result'] = 'FAIL'
@@ -290,7 +310,12 @@ def health_check_view(*args, **kwargs):
                     elif check['name'] == 'memory_cache':
                         n_dict = {}
                         n_dict['current_cache'] = round(float(memory_stats.get('cache_mb', 0)), 2)
-                        n_dict['min_cache'] = float(check.get('min_cache', 50))
+                        min_cache = check.get('min_cache')
+                        if not min_cache:
+                            raise AnsibleFilterError(
+                                "Missing required min_cache value for memory_cache check. Please provide it in the playbook."
+                            )
+                        n_dict['min_cache'] = float(min_cache)
                         n_dict['status'] = 'PASS' if n_dict['current_cache'] >= n_dict['min_cache'] else 'FAIL'
                         if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
                             health_checks['result'] = 'FAIL'

@@ -18,6 +18,11 @@
   ansible.builtin.debug:
     msg: "Environment Health Check Result: {{ env_result }}"
 
+- name: Assert result has not changed
+  ansible.builtin.assert:
+    that:
+      - env_result.changed == false
+
 - name: Ending Environment health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.environment health check integration tests on connection={{ ansible_connection }}"

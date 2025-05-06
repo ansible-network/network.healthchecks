@@ -20,6 +20,11 @@
               - name: min_neighbors_up
                 min_count: 1
       register: bgp_result
+    
+    - name: Assert result has not changed
+      ansible.builtin.assert:
+        that:
+          - bgp_result.changed == false
 
 - name: Debug
   ansible.builtin.debug:

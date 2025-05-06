@@ -21,6 +21,11 @@
                 min_count: 1
       register: ospf_result
 
+    - name: Assert result has not changed
+      ansible.builtin.assert:
+        that:
+          - ospf_result.changed == false
+
 - name: Debug
   ansible.builtin.debug:
     msg: "END network.ospf health_check role integration tests on connection={{ ansible_connection }}"
