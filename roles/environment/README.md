@@ -39,7 +39,7 @@ The `network.healthchecks.environment` role allows monitoring of environmental c
 {
     "health_checks": {
         "environment": {
-            "check_status": "FAIL",
+            "status": "FAIL",
             "temperature": {
                 "current_temp": 45,
                 "threshold": 40
@@ -52,13 +52,13 @@ The `network.healthchecks.environment` role allows monitoring of environmental c
                 "status": "OK"
             }
         },
-        "status": "FAIL"
+        "result": "FAIL"
     }
 }
 ```
 
 ### Health Check Status
-- `status`: Overall health check status
+- `result`: Overall health check status
   - `PASS`: All environmental conditions are within thresholds
   - `FAIL`: At least one environmental condition exceeds thresholds
 - `environment`: Environmental metrics

@@ -7,7 +7,7 @@ The `network.healthchecks.uptime` role allows monitoring of system uptime on net
 - Monitor system uptime with configurable thresholds
 - Track uptime in weeks, days, hours, and minutes
 - Generate alerts for devices with low uptime
-- Provide detailed health check status (successful/unsuccessful)
+- Provide detailed health check status (PASS/FAIL)
 - Show uptime statistics in human-readable format
 
 ## Variables
@@ -35,7 +35,7 @@ The `network.healthchecks.uptime` role allows monitoring of system uptime on net
 {
     "health_checks": {
         "uptime": {
-            "check_status": "PASS",
+            "status": "PASS",
             "current_uptime": 5760,
             "min_uptime": 1440
         },
@@ -45,18 +45,18 @@ The `network.healthchecks.uptime` role allows monitoring of system uptime on net
             "hours": 22,
             "minutes": 36
         },
-        "status": "PASS"
+        "result": "PASS"
     }
 }
 ```
 
 ### Health Check Status
-- `check_status`: Indicates whether the system uptime meets the minimum threshold
-  - `successful`: System uptime meets or exceeds the threshold
-  - `unsuccessful`: System uptime is below the threshold
-- `status`: Overall health check status
-  - `successful`: All checks passed (or failed checks are ignored)
-  - `unsuccessful`: At least one non-ignored check failed
+- `status`: Indicates whether the system uptime meets the minimum threshold
+  - `PASS`: System uptime meets or exceeds the threshold
+  - `FAIL`: System uptime is below the threshold
+- `result`: Overall health check status
+  - `PASS`: All checks passed (or failed checks are ignored)
+  - `FAIL`: At least one non-ignored check failed
 
 ## License
 

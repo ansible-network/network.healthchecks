@@ -86,7 +86,7 @@ def health_check_view(*args, **kwargs):
     health_facts = data["health_facts"] or {}
     target = data["target"]
     health_checks = {}
-    health_checks['status'] = 'PASS'
+    health_checks['result'] = 'PASS'
 
     # Handle CPU health checks
     if isinstance(target, list):
@@ -101,9 +101,9 @@ def health_check_view(*args, **kwargs):
             free_threshold = kwargs.get('filesystem_free_threshold', 10)
             
             if free_percent < free_threshold:
-                health_checks['status'] = 'FAIL'
+                health_checks['result'] = 'FAIL'
                 health_checks['filesystem'] = {
-                    'check_status': 'FAIL',
+                    'status': 'FAIL',
                     'free_percent': round(free_percent, 2),
                     'threshold': free_threshold,
                     'total': fs_data.get('total', 0),
@@ -111,7 +111,7 @@ def health_check_view(*args, **kwargs):
                 }
             else:
                 health_checks['filesystem'] = {
-                    'check_status': 'PASS',
+                    'status': 'PASS',
                     'free_percent': round(free_percent, 2),
                     'threshold': free_threshold,
                     'total': fs_data.get('total', 0),
@@ -170,9 +170,9 @@ def health_check_view(*args, **kwargs):
 
             # Set status based on thresholds
             if current_util >= kwargs.get('critical_threshold', 95):
-                health_checks['status'] = 'FAIL'
+                health_checks['result'] = 'FAIL'
             elif current_util >= kwargs.get('warning_threshold', 85):
-                health_checks['status'] = 'WARNING'
+                health_checks['result'] = 'WARNING'
 
             # Always include details if details flag is True
             if kwargs.get('details', False):
@@ -187,19 +187,19 @@ def health_check_view(*args, **kwargs):
             if 'temperature' in env_health:
                 current_temp = env_health['temperature'].get('current_temp', 0)
                 if current_temp > temp_threshold:
-                    health_checks['status'] = 'FAIL'
+                    health_checks['result'] = 'FAIL'
 
             # Check fan status
             if 'fans' in env_health:
                 fan_status = env_health['fans'].get('status', '')
                 if fan_status and fan_status.lower() != 'ok':
-                    health_checks['status'] = 'FAIL'
+                    health_checks['result'] = 'FAIL'
 
             # Check power supply if available
             if 'power' in env_health:
                 power_status = env_health['power'].get('status', '')
                 if power_status and power_status.lower() != 'ok':
-                    health_checks['status'] = 'FAIL'
+                    health_checks['result'] = 'FAIL'
 
             # Always include details if details flag is True
             if kwargs.get('details', False):
@@ -237,9 +237,9 @@ def health_check_view(*args, **kwargs):
                     if check['name'] == 'crash_files':
                         n_dict = {}
                         n_dict['total_crash_files'] = len(crash_files)
-                        n_dict['check_status'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        n_dict['status'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'crash_files_summary':
                         n_dict = {
@@ -259,40 +259,42 @@ def health_check_view(*args, **kwargs):
                         utilization = (used_mb / total_mb * 100) if total_mb > 0 else 0
                         n_dict['current_utilization'] = round(utilization, 2)
                         n_dict['threshold'] = float(check.get('threshold', 80))
-                        n_dict['check_status'] = 'PASS' if utilization <= n_dict['threshold'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        n_dict['status'] = 'PASS' if utilization <= n_dict['threshold'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_status_summary':
                         n_dict = {
                             'total_mb': round(float(memory_stats.get('total_mb', 0)), 2),
                             'used_mb': round(float(memory_stats.get('used_mb', 0)), 2),
-                            'free_mb': round(float(memory_stats.get('free_mb', 0)), 2)
+                            'free_mb': round(float(memory_stats.get('free_mb', 0)), 2),
+                            'buffers_mb': round(float(memory_stats.get('buffers_mb', 0)), 2),
+                            'cache_mb': round(float(memory_stats.get('cache_mb', 0)), 2)
                         }
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_free':
                         n_dict = {}
                         n_dict['current_free'] = round(float(memory_stats.get('free_mb', 0)), 2)
                         n_dict['min_free'] = float(check.get('min_free', 100))
-                        n_dict['check_status'] = 'PASS' if n_dict['current_free'] >= n_dict['min_free'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        n_dict['status'] = 'PASS' if n_dict['current_free'] >= n_dict['min_free'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_buffers':
                         n_dict = {}
                         n_dict['current_buffers'] = round(float(memory_stats.get('buffers_mb', 0)), 2)
                         n_dict['min_buffers'] = float(check.get('min_buffers', 50))
-                        n_dict['check_status'] = 'PASS' if n_dict['current_buffers'] >= n_dict['min_buffers'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        n_dict['status'] = 'PASS' if n_dict['current_buffers'] >= n_dict['min_buffers'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_cache':
                         n_dict = {}
                         n_dict['current_cache'] = round(float(memory_stats.get('cache_mb', 0)), 2)
                         n_dict['min_cache'] = float(check.get('min_cache', 50))
-                        n_dict['check_status'] = 'PASS' if n_dict['current_cache'] >= n_dict['min_cache'] else 'FAIL'
-                        if n_dict['check_status'] == 'FAIL' and not check.get('ignore_errors'):
-                            health_checks['status'] = 'FAIL'
+                        n_dict['status'] = 'PASS' if n_dict['current_cache'] >= n_dict['min_cache'] else 'FAIL'
+                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                            health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
 
             # Handle BGP health checks
@@ -310,9 +312,9 @@ def health_check_view(*args, **kwargs):
                 if vars.get('details'):
                     details['neighbors'] = health_facts['neighbors']
                     n_dict['details'] = details
-                n_dict['check_status'] = 'PASS' if stats['total'] == stats['up'] else 'FAIL'
-                if n_dict['check_status'] == 'FAIL' and not data['all_up'].get('ignore_errors'):
-                    health_checks['status'] = 'FAIL'
+                n_dict['status'] = 'PASS' if stats['total'] == stats['up'] else 'FAIL'
+                if n_dict['status'] == 'FAIL' and not data['all_up'].get('ignore_errors'):
+                    health_checks['result'] = 'FAIL'
                 health_checks[data['all_up'].get('name')] = n_dict
 
             if data.get('all_down'):
@@ -322,9 +324,9 @@ def health_check_view(*args, **kwargs):
                 if vars.get('details'):
                     details['neighbors'] = health_facts['neighbors']
                     n_dict['details'] = details
-                n_dict['check_status'] = 'PASS' if stats['total'] == stats['down'] else 'FAIL'
-                if n_dict['check_status'] == 'FAIL' and not data['all_down'].get('ignore_errors'):
-                    health_checks['status'] = 'FAIL'
+                n_dict['status'] = 'PASS' if stats['total'] == stats['down'] else 'FAIL'
+                if n_dict['status'] == 'FAIL' and not data['all_down'].get('ignore_errors'):
+                    health_checks['result'] = 'FAIL'
                 health_checks[data['all_down'].get('name')] = n_dict
 
             if data.get('min_up'):
@@ -334,16 +336,14 @@ def health_check_view(*args, **kwargs):
                 if vars.get('details'):
                     details['neighbors'] = health_facts['neighbors']
                     n_dict['details'] = details
-                n_dict['check_status'] = 'PASS' if data['min_up']['min_count'] <= stats['up'] else 'FAIL'
-                if n_dict['check_status'] == 'FAIL' and not data['min_up'].get('ignore_errors'):
-                    health_checks['status'] = 'FAIL'
+                n_dict['status'] = 'PASS' if data['min_up']['min_count'] <= stats['up'] else 'FAIL'
+                if n_dict['status'] == 'FAIL' and not data['min_up'].get('ignore_errors'):
+                    health_checks['result'] = 'FAIL'
                 health_checks[data['min_up'].get('name')] = n_dict
 
             # Update overall status
-            if any(check.get('check_status') == 'FAIL' for check in health_checks.values() if isinstance(check, dict)):
-                health_checks['status'] = 'FAIL'
-            else:
-                health_checks['status'] = 'PASS'
+            if any(check.get('status') == 'FAIL' for check in health_checks.values() if isinstance(check, dict)):
+                health_checks['result'] = 'FAIL'
         else:
             health_checks = health_facts
     return health_checks

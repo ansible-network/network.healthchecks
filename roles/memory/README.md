@@ -44,42 +44,38 @@ The `network.healthchecks.memory` role allows monitoring of memory usage on netw
 {
     "health_checks": {
         "memory_utilization": {
-            "check_status": "PASS",
+            "status": "PASS",
             "current_utilization": 45,
             "threshold": 80
         },
         "memory_free": {
-            "check_status": "PASS",
+            "status": "PASS",
             "current_free": 150,
-            "min_free": 100
+            "min_free": 100,
+            "free_mb": 550,
         },
         "memory_buffers": {
-            "check_status": "PASS",
+            "status": "PASS",
             "current_buffers": 75,
-            "min_buffers": 50
+            "min_buffers": 50,
+            "buffers_mb": 75,
         },
         "memory_cache": {
-            "check_status": "PASS",
+            "status": "PASS",
             "current_cache": 60,
-            "min_cache": 50
-        },
-        "memory_status_summary": {
-            "total_mb": 1000,
-            "used_mb": 450,
-            "free_mb": 550,
-            "buffers_mb": 75,
+            "min_cache": 50,
             "cache_mb": 60
         },
-        "status": "PASS"
+        "result": "PASS"
     }
 }
 ```
 
 ### Health Check Status
-- `check_status`: Indicates whether each memory metric is within acceptable limits
+- `status`: Indicates whether each memory metric is within acceptable limits
   - `PASS`: Memory metrics are within thresholds
   - `FAIL`: Memory metrics exceed thresholds
-- `status`: Overall health check status
+- `result`: Overall health check status
   - `PASS`: All checks passed (or failed checks are ignored)
   - `FAIL`: At least one non-ignored check failed
 
