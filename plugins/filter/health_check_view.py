@@ -278,13 +278,20 @@ def health_check_view(*args, **kwargs):
 
             # Handle memory health checks
             if any(check['name'] in ['memory_utilization', 'memory_status_summary', 'memory_free', 'memory_buffers', 'memory_cache'] for check in checks):
-                memory_stats = health_facts.get('processor_memory', {})
+                memory_stats = health_facts.get('memory_health', {})
                 for check in checks:
                     if check['name'] == 'memory_utilization':
                         n_dict = {}
-                        total_mb = float(memory_stats.get('total_mb'))
-                        used_mb = float(memory_stats.get('used_mb'))
-                        utilization = (used_mb / total_mb * 100)
+                        # Handle IOS XR format
+                        if 'physical_memory' in memory_stats:
+                            total_mb = float(memory_stats['physical_memory'].get('total_mb', 0))
+                            available_mb = float(memory_stats['physical_memory'].get('available', 0))
+                            used_mb = total_mb - available_mb
+                        else:
+                            total_mb = float(memory_stats.get('total_mb', 0))
+                            used_mb = float(memory_stats.get('used_mb', 0))
+                        
+                        utilization = (used_mb / total_mb * 100) if total_mb > 0 else 0
                         n_dict['current_utilization'] = round(utilization, 2)
                         threshold = check.get('threshold', health_facts.get('memory_utilization_threshold'))
                         if not threshold:
@@ -297,17 +304,28 @@ def health_check_view(*args, **kwargs):
                             health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_status_summary':
-                        n_dict = {
-                            'total_mb': round(float(memory_stats.get('total_mb')), 2),
-                            'used_mb': round(float(memory_stats.get('used_mb')), 2),
-                            'free_mb': round(float(memory_stats.get('free_mb')), 2),
-                            'buffers_mb': round(float(memory_stats.get('buffers_mb')), 2),
-                            'cache_mb': round(float(memory_stats.get('cache_mb')), 2)
-                        }
+                        n_dict = {}
+                        # Handle IOS XR format
+                        if 'physical_memory' in memory_stats:
+                            n_dict['total_mb'] = round(float(memory_stats['physical_memory'].get('total_mb', 0)), 2)
+                            n_dict['free_mb'] = round(float(memory_stats['physical_memory'].get('available', 0)), 2)
+                            n_dict['used_mb'] = round(n_dict['total_mb'] - n_dict['free_mb'], 2)
+                        else:
+                            n_dict['total_mb'] = round(float(memory_stats.get('total_mb', 0)), 2)
+                            n_dict['used_mb'] = round(float(memory_stats.get('used_mb', 0)), 2)
+                            n_dict['free_mb'] = round(float(memory_stats.get('free_mb', 0)), 2)
+                        
+                        n_dict['buffers_mb'] = round(float(memory_stats.get('buffers_mb', 0)), 2)
+                        n_dict['cache_mb'] = round(float(memory_stats.get('cache_mb', 0)), 2)
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_free':
                         n_dict = {}
-                        n_dict['current_free'] = round(float(memory_stats.get('free_mb', 0)), 2)
+                        # Handle IOS XR format
+                        if 'physical_memory' in memory_stats:
+                            n_dict['current_free'] = round(float(memory_stats['physical_memory'].get('available', 0)), 2)
+                        else:
+                            n_dict['current_free'] = round(float(memory_stats.get('free_mb', 0)), 2)
+                        
                         min_free = check.get('min_free', health_facts.get('memory_min_free'))
                         if not min_free:
                             raise AnsibleFilterError(
