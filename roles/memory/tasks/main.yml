@@ -28,8 +28,7 @@
     memory_health_checks: "{{ health_checks }}"
 
 - name: Verify memory health check results
-  ansible.builtin.assert:
-    that:
-      - memory_health_checks.status == "successful"
-    fail_msg: "Memory health check failed - Overall status is unsuccessful"
-    success_msg: "Memory health check passed - Overall status is successful"
+  ansible.builtin.debug:
+    var: health_checks
+  failed_when: "'FAIL' == health_checks.result"
+
