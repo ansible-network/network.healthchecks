@@ -4,9 +4,9 @@
     "name": "crash_lines",
     "getval": "(?m)^(?P<line>.*crash.*)$",
     "result": {
-      "crash_lines": [
+      "crash_files": [
         {
-          "line": "{{ line }}"
+          "file": "{{ line }}"
         }
       ]
     }

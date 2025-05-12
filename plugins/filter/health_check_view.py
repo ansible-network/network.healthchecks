@@ -211,27 +211,57 @@ def health_check_view(*args, **kwargs):
                     "Missing required environment_temp_threshold value. Please provide it in the playbook or defaults."
                 )
 
+            n_dict = {
+                'status': 'PASS',
+                'temperature': {
+                    'current_temp': 0,
+                    'threshold': float(temp_threshold)
+                },
+                'fans': {
+                    'status': 'NotSupported',
+                    'zone_speed': 'NotSupported'
+                },
+                'power': {
+                    'status': 'NotSupported'
+                }
+            }
+
             # Check temperature if available
             if 'temperature' in env_health:
-                current_temp = env_health['temperature'].get('current_temp')
+                current_temp = float(env_health['temperature'].get('current_temp', 0))
+                n_dict['temperature']['current_temp'] = current_temp
                 if current_temp > temp_threshold:
+                    n_dict['status'] = 'FAIL'
                     health_checks['result'] = 'FAIL'
 
             # Check fan status
             if 'fans' in env_health:
-                fan_status = env_health['fans'].get('status', '')
-                if fan_status and fan_status.lower() != 'ok':
+                fan_data = env_health['fans']
+                n_dict['fans'] = {
+                    'status': fan_data.get('status', 'NotSupported'),
+                    'zone_speed': fan_data.get('zone_speed', 'NotSupported')
+                }
+                if n_dict['fans']['status'] != 'OK':
+                    n_dict['status'] = 'FAIL'
                     health_checks['result'] = 'FAIL'
 
             # Check power supply if available
             if 'power' in env_health:
-                power_status = env_health['power'].get('status', '')
-                if power_status and power_status.lower() != 'ok':
+                power_data = env_health['power']
+                n_dict['power'] = {
+                    'status': power_data.get('status', 'NotSupported')
+                }
+                if n_dict['power']['status'] != 'OK':
+                    n_dict['status'] = 'FAIL'
                     health_checks['result'] = 'FAIL'
 
-            # Always include details if details flag is True
-            if kwargs.get('details', False):
-                health_checks['details'] = env_health
+            # Always include the environment section in the output
+            health_checks['environment'] = n_dict
+            # Set overall result based on environment status
+            if n_dict['status'] == 'FAIL':
+                health_checks['result'] = 'FAIL'
+            else:
+                health_checks['result'] = 'PASS'
 
     # Handle BGP health checks
     elif target['name'] == 'health_check':
@@ -260,13 +290,17 @@ def health_check_view(*args, **kwargs):
 
             # Handle crash files health checks
             if any(check['name'] in ['crash_files', 'crash_files_summary'] for check in checks):
-                crash_files = health_facts.get('crash_files', [])
+                crash_data = health_facts.get('crash_health', {})
+                crash_files = crash_data.get('crash_files', [])
+                
                 for check in checks:
                     if check['name'] == 'crash_files':
-                        n_dict = {}
-                        n_dict['total_crash_files'] = len(crash_files)
-                        n_dict['status'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
-                        if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
+                        n_dict = {
+                            'status': 'PASS',
+                            'total_crash_files': len(crash_files)
+                        }
+                        if len(crash_files) > 0:
+                            n_dict['status'] = 'FAIL'
                             health_checks['result'] = 'FAIL'
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'crash_files_summary':
@@ -410,6 +444,10 @@ def health_check_view(*args, **kwargs):
             # Update overall status
             if any(check.get('status') == 'FAIL' for check in health_checks.values() if isinstance(check, dict)):
                 health_checks['result'] = 'FAIL'
+
+            # Set overall result if not already set
+            if 'result' not in health_checks:
+                health_checks['result'] = 'PASS' if len(crash_files) == 0 else 'FAIL'
         else:
             health_checks = health_facts
     return health_checks

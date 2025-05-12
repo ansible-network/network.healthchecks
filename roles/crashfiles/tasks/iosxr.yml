@@ -4,7 +4,12 @@
     command: "show logging | include crash"
     parser:
       name: ansible.netcommon.native
+      template_path: "{{ role_path }}/tasks/templates/iosxr_show_logging_|_include_crash.yaml"
     set_fact: crash_health
+
+- name: Set crash health fact
+  ansible.builtin.set_fact:
+    crash_health: "{{ crash_health | default({}) }}"
 
 - name: Debug crash health
   ansible.builtin.debug:
