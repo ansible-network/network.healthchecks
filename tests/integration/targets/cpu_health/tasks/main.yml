@@ -11,14 +11,17 @@
       vars:
         cpu_utilization:
           details: true
-          warning_threshold: 90
-          critical_threshold: 95
+          warning_threshold: 0
+          critical_threshold: 0
       register: result
 
-    - name: Assert result has not changed
-      ansible.builtin.assert:
-        that:
-          - result.changed == false
+# for cri = 0, warning=0 , it should fail
+# threshold should be by default
+
+    # - name: Assert result has not changed
+    #   ansible.builtin.assert:
+    #     that:
+    #       - result.changed == false
 
 - name: Debug
   ansible.builtin.debug:

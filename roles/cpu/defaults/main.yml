@@ -1,5 +1,9 @@
 ---
 # defaults file for network.healthchecks.cpu
 # Default CPU threshold percentages
-cpu_warning_threshold: 85
-cpu_critical_threshold: 95
+cpu_warning_threshold: 0
+cpu_critical_threshold: 0
+
+#compare the default values with the values in the tasks/main.yml file
+# case 1: cri = 0, warning = 0, it should fail
+# cri = 95, warning = 85, it should pass,

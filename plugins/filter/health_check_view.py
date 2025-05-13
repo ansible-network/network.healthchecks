@@ -311,7 +311,7 @@ def health_check_view(*args, **kwargs):
                         health_checks[check['name']] = n_dict
 
             # Handle memory health checks
-            if any(check['name'] in ['memory_utilization', 'memory_status_summary', 'memory_free', 'memory_buffers', 'memory_cache'] for check in checks):
+            if any(check['name'] in ['memory_utilization', 'memory_free', 'memory_buffers', 'memory_cache'] for check in checks):
                 memory_stats = health_facts.get('memory_health', {})
                 for check in checks:
                     if check['name'] == 'memory_utilization':
@@ -336,21 +336,6 @@ def health_check_view(*args, **kwargs):
                         n_dict['status'] = 'PASS' if utilization <= n_dict['threshold'] else 'FAIL'
                         if n_dict['status'] == 'FAIL' and not check.get('ignore_errors'):
                             health_checks['result'] = 'FAIL'
-                        health_checks[check['name']] = n_dict
-                    elif check['name'] == 'memory_status_summary':
-                        n_dict = {}
-                        # Handle IOS XR format
-                        if 'physical_memory' in memory_stats:
-                            n_dict['total_mb'] = round(float(memory_stats['physical_memory'].get('total_mb', 0)), 2)
-                            n_dict['free_mb'] = round(float(memory_stats['physical_memory'].get('available', 0)), 2)
-                            n_dict['used_mb'] = round(n_dict['total_mb'] - n_dict['free_mb'], 2)
-                        else:
-                            n_dict['total_mb'] = round(float(memory_stats.get('total_mb', 0)), 2)
-                            n_dict['used_mb'] = round(float(memory_stats.get('used_mb', 0)), 2)
-                            n_dict['free_mb'] = round(float(memory_stats.get('free_mb', 0)), 2)
-                        
-                        n_dict['buffers_mb'] = round(float(memory_stats.get('buffers_mb', 0)), 2)
-                        n_dict['cache_mb'] = round(float(memory_stats.get('cache_mb', 0)), 2)
                         health_checks[check['name']] = n_dict
                     elif check['name'] == 'memory_free':
                         n_dict = {}
