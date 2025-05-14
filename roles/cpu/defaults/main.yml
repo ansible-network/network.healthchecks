@@ -3,7 +3,3 @@
 # Default CPU threshold percentages
 cpu_warning_threshold: 80
 cpu_critical_threshold: 90
-
-#compare the default values with the values in the tasks/main.yml file
-# case 1: cri = 0, warning = 0, it should fail
-# cri = 95, warning = 85, it should pass,
