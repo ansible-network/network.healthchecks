@@ -5,7 +5,44 @@
 
 - name: Run CPU health check validated content operation
   block:
-    - name: Run network.cpu validated content with health_checks operation
+    # Test Case 1: Default thresholds (warning: 80, critical: 90)
+    - name: Run network.cpu with default thresholds
+      ansible.builtin.include_role:
+        name: network.healthchecks.cpu
+      vars:
+        cpu_utilization:
+          details: true
+      register: default_result
+
+    - name: Assert default threshold result
+      ansible.builtin.assert:
+        that:
+          - default_result.changed == false
+          - default_result.cpu_utilization.status == "FAIL"
+          - default_result.cpu_utilization.details.cpu_utilization.status == "FAIL"
+          - default_result.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
+
+    # Test Case 2: Custom thresholds (warning: 85, critical: 95)
+    - name: Run network.cpu with custom thresholds
+      ansible.builtin.include_role:
+        name: network.healthchecks.cpu
+      vars:
+        cpu_utilization:
+          details: true
+          warning_threshold: 80
+          critical_threshold: 95
+      register: custom_result
+
+    - name: Assert custom threshold result
+      ansible.builtin.assert:
+        that:
+          - custom_result.changed == false
+          - custom_result.cpu_utilization.status == "FAIL"
+          - custom_result.cpu_utilization.details.cpu_utilization.status == "FAIL"
+          - custom_result.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
+
+    # Test Case 3: Very low thresholds (warning: 0, critical: 0)
+    - name: Run network.cpu with very low thresholds
       ansible.builtin.include_role:
         name: network.healthchecks.cpu
       vars:
@@ -13,15 +50,16 @@
           details: true
           warning_threshold: 0
           critical_threshold: 0
-      register: result
+      register: low_threshold_result
 
-# for cri = 0, warning=0 , it should fail
-# threshold should be by default
+    - name: Assert low threshold result
+      ansible.builtin.assert:
+        that:
+          - low_threshold_result.changed == false
+          - low_threshold_result.cpu_utilization.status == "FAIL"
+          - low_threshold_result.cpu_utilization.details.cpu_utilization.status == "FAIL"
+          - low_threshold_result.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
 
-    # - name: Assert result has not changed
-    #   ansible.builtin.assert:
-    #     that:
-    #       - result.changed == false
 
 - name: Debug
   ansible.builtin.debug:

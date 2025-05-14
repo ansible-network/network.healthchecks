@@ -5,8 +5,6 @@ __metaclass__ = type
 import os
 import yaml
 from ansible.errors import AnsibleFilterError
-from ansible.module_utils.six import string_types
-from ansible.module_utils.common._collections_compat import Mapping
 
 # Load default values from defaults/main.yml
 DEFAULTS_FILE = os.path.join(os.path.dirname(__file__), 'defaults', 'main.yml')
@@ -81,6 +79,7 @@ RETURN = """
     type: dict
 """
 
+
 def health_check_view(*args, **kwargs):
     params = ["health_facts", "target"]
     data = dict(zip(params, args))
@@ -92,10 +91,9 @@ def health_check_view(*args, **kwargs):
         )
 
     health_facts = data["health_facts"] or {}
-    # Merge defaults with health_facts
-    for key, value in DEFAULT_VALUES.items():
-        if key not in health_facts:
-            health_facts[key] = value
+    # Use passed thresholds or fall back to defaults
+    threshold = kwargs.get('threshold', health_facts.get('cpu_threshold', DEFAULT_VALUES.get('cpu_threshold', 80)))
+    critical_threshold = kwargs.get('critical_threshold', health_facts.get('cpu_critical_threshold', DEFAULT_VALUES.get('cpu_critical_threshold', 90)))
 
     target = data["target"]
     health_checks = {}
@@ -112,12 +110,12 @@ def health_check_view(*args, **kwargs):
             fs_data = health_facts['fs_health'].get('fs_health', {})
             free_percent = (fs_data.get('free') / fs_data.get('total')) * 100
             free_threshold = kwargs.get('filesystem_free_threshold', health_facts.get('filesystem_free_threshold'))
-            
+
             if not free_threshold:
                 raise AnsibleFilterError(
                     "Missing required filesystem_free_threshold value. Please provide it in the playbook or defaults."
                 )
-            
+
             if free_percent < free_threshold:
                 health_checks['result'] = 'FAIL'
                 health_checks['filesystem'] = {
@@ -146,66 +144,67 @@ def health_check_view(*args, **kwargs):
             if 'cpu_usage' in health_facts and isinstance(health_facts['cpu_usage'], dict):
                 cpu_usage = health_facts['cpu_usage']
                 current_util = cpu_usage.get('five_minute', 0)
-                
+
             # Handle IOS-XR CPU structure
             elif 'cpu' in health_facts and isinstance(health_facts['cpu'], dict):
                 cpu = health_facts['cpu']
                 current_util = cpu.get('5_min_avg', 0)
-                
+
             # Handle IOS CPU structure
             elif 'global' in health_facts:
                 cpu_summary = health_facts.get('global', {})
                 current_util = cpu_summary.get('five_minute', 0)
-                
+
             # Handle NX-OS raw CPU data
             elif 'processes' in health_facts and isinstance(health_facts['processes'], dict):
                 processes = health_facts['processes']
                 current_util = processes.get('five_minute', 0)
-                
+
             else:
                 current_util = 0
 
-            # Set status based on thresholds
-            warning_threshold = kwargs.get('warning_threshold')
-            critical_threshold = kwargs.get('critical_threshold')
-            
-            if not warning_threshold or not critical_threshold:
-                raise AnsibleFilterError(
-                    "Missing required threshold values. Please provide warning_threshold and critical_threshold in the playbook."
-                )
-            
+            # Set status based on threshold comparison
             if current_util >= critical_threshold:
                 health_checks['result'] = 'FAIL'
                 status = 'FAIL'
-            elif current_util >= warning_threshold:
+                message = "CPU utilization is above the critical threshold"
+            elif current_util >= threshold:
                 health_checks['result'] = 'WARNING'
                 status = 'WARNING'
+                message = "CPU utilization is above the threshold"
             else:
                 status = 'PASS'
+                message = "CPU utilization is within acceptable limits"
 
             # Add CPU utilization to health checks with exact README format
             health_checks['cpu_utilization'] = {
                 'status': status,
+                'message': message,
                 '1_min_avg': current_util,
                 '5_min_avg': current_util,
-                'threshold': warning_threshold
+                'threshold': threshold
             }
 
             # Always include details if details flag is True
             if kwargs.get('details', False):
                 health_checks['details'] = {
-                    '1_min_avg': current_util,
-                    '5_min_avg': current_util,
-                    'threshold': warning_threshold
+                    'cpu_utilization': {
+                        'status': status,
+                        'message': message,
+                        '1_min_avg': current_util,
+                        '5_min_avg': current_util,
+                        'threshold': threshold
+                    }
                 }
 
         # Environment Health Checks
         if any(check['name'] in ['environment_minimum_threshold'] for check in checks):
             env_health = health_facts.get('env_health', {})
-            temp_threshold = next((check.get('environment_temp_threshold', health_facts.get('environment_temp_threshold')) 
-                                 for check in checks if check['name'] == 'environment_minimum_threshold'), 
-                                 health_facts.get('environment_temp_threshold'))
-
+            temp_threshold = next(
+                (check.get('environment_temp_threshold', health_facts.get('environment_temp_threshold'))
+                 for check in checks if check['name'] == 'environment_minimum_threshold'),
+                health_facts.get('environment_temp_threshold')
+            )
             if not temp_threshold:
                 raise AnsibleFilterError(
                     "Missing required environment_temp_threshold value. Please provide it in the playbook or defaults."
@@ -292,7 +291,7 @@ def health_check_view(*args, **kwargs):
             if any(check['name'] in ['crash_files', 'crash_files_summary'] for check in checks):
                 crash_data = health_facts.get('crash_health', {})
                 crash_files = crash_data.get('crash_files', [])
-                
+
                 for check in checks:
                     if check['name'] == 'crash_files':
                         n_dict = {
@@ -324,7 +323,7 @@ def health_check_view(*args, **kwargs):
                         else:
                             total_mb = float(memory_stats.get('total_mb', 0))
                             used_mb = float(memory_stats.get('used_mb', 0))
-                        
+
                         utilization = (used_mb / total_mb * 100) if total_mb > 0 else 0
                         n_dict['current_utilization'] = round(utilization, 2)
                         threshold = check.get('threshold', health_facts.get('memory_utilization_threshold'))
@@ -344,7 +343,7 @@ def health_check_view(*args, **kwargs):
                             n_dict['current_free'] = round(float(memory_stats['physical_memory'].get('available', 0)), 2)
                         else:
                             n_dict['current_free'] = round(float(memory_stats.get('free_mb', 0)), 2)
-                        
+
                         min_free = check.get('min_free', health_facts.get('memory_min_free'))
                         if not min_free:
                             raise AnsibleFilterError(

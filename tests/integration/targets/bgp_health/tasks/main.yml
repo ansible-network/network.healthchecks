@@ -20,11 +20,18 @@
               - name: min_neighbors_up
                 min_count: 1
       register: bgp_result
-    
+
     - name: Assert result has not changed
       ansible.builtin.assert:
         that:
           - bgp_result.changed == false
+
+    - name: Assert that the health check data is correctly generated
+      ansible.builtin.assert:
+        that:
+          - bgp_result.bgp_health_check.status == "PASS"
+          - bgp_result.bgp_health_check.details.bgp_health_check.status == "PASS"
+          - bgp_result.bgp_health_check.details.bgp_health_check.message == "BGP health check passed"
 
 - name: Debug
   ansible.builtin.debug:

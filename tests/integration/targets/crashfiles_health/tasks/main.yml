@@ -24,6 +24,12 @@
         that:
           - crash_result.changed == false
 
+    - name: Assert that the health check data is correctly generated
+      ansible.builtin.assert:
+        that:
+          - crash_result.crashinfo_files.status == "PASS"
+          - crash_result.cores.status == "PASS"
+
 - name: Ending Crash Files health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.crash_files health check integration tests on connection={{ ansible_connection }}"
