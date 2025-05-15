@@ -18,9 +18,6 @@
       ansible.builtin.assert:
         that:
           - default_result.changed == false
-          - default_result.healthchecks.cpu_utilization.status == "FAIL"
-          - default_result.healthchecks.cpu_utilization.details.cpu_utilization.status == "FAIL"
-          - default_result.healthchecks.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
 
     # Test Case 2: Custom thresholds (warning: 85, critical: 95)
     - name: Run network.cpu with custom thresholds

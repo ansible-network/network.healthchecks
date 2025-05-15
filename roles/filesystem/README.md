@@ -19,12 +19,11 @@ The `network.healthchecks.filesystem` role allows monitoring of filesystem usage
 
 ### Example: Monitoring Filesystem Usage
 ```yaml
-- name: Monitor filesystem utilization
+- name: Run network.filesystem validated content with filesystem health check operation
   ansible.builtin.include_role:
     name: network.healthchecks.filesystem
   vars:
-    filesystem_free_threshold: 10
-    ignore_errors: false
+    min_free_space_mb: 10
   register: fs_result
 
 - name: Display filesystem health check results
