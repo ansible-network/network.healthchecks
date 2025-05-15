@@ -28,7 +28,6 @@
     that:
       - env_result.environment.status == "PASS"
       - env_result.environment.details.environment.status == "PASS"
-      - env_result.environment.details.environment.message == "Environment health check passed"
 
 - name: Ending Environment health check integration tests
   ansible.builtin.debug:

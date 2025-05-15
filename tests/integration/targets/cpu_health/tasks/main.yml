@@ -18,9 +18,9 @@
       ansible.builtin.assert:
         that:
           - default_result.changed == false
-          - default_result.cpu_utilization.status == "FAIL"
-          - default_result.cpu_utilization.details.cpu_utilization.status == "FAIL"
-          - default_result.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
+          - default_result.healthchecks.cpu_utilization.status == "FAIL"
+          - default_result.healthchecks.cpu_utilization.details.cpu_utilization.status == "FAIL"
+          - default_result.healthchecks.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
 
     # Test Case 2: Custom thresholds (warning: 85, critical: 95)
     - name: Run network.cpu with custom thresholds
@@ -37,9 +37,9 @@
       ansible.builtin.assert:
         that:
           - custom_result.changed == false
-          - custom_result.cpu_utilization.status == "FAIL"
-          - custom_result.cpu_utilization.details.cpu_utilization.status == "FAIL"
-          - custom_result.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
+          - custom_result.healthchecks.cpu_utilization.status == "FAIL"
+          - custom_result.healthchecks.cpu_utilization.details.cpu_utilization.status == "FAIL"
+          - custom_result.healthchecks.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
 
     # Test Case 3: Very low thresholds (warning: 0, critical: 0)
     - name: Run network.cpu with very low thresholds
@@ -56,9 +56,9 @@
       ansible.builtin.assert:
         that:
           - low_threshold_result.changed == false
-          - low_threshold_result.cpu_utilization.status == "FAIL"
-          - low_threshold_result.cpu_utilization.details.cpu_utilization.status == "FAIL"
-          - low_threshold_result.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
+          - low_threshold_result.healthchecks.cpu_utilization.status == "FAIL"
+          - low_threshold_result.healthchecks.cpu_utilization.details.cpu_utilization.status == "FAIL"
+          - low_threshold_result.healthchecks.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
 
 
 - name: Debug
