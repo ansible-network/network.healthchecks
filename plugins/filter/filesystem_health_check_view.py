@@ -22,7 +22,7 @@ EXAMPLES = r"""
   tasks:
     - name: Filesystem Manager
       ansible.builtin.include_role:
-        name: network.filesystem.run
+        name: network.healthchecks.filesystem
       vars:
         min_free_space_mb: 10
 """
