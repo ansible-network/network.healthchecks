@@ -13,17 +13,23 @@
   ansible.builtin.set_fact:
     health_checks: >-
       {{
-        fs_health | network.healthchecks.health_check_view(
-          checks,
-          details=details | default(false),
-          filesystem_free_threshold=filesystem_free_threshold | default(10)
+        fs_health | network.healthchecks.filesystem_health_check_view(
+          {
+            'name': 'health_check',
+            'vars': {
+              'checks': [
+                {
+                  'name': 'filesystem_status_summary',
+                  'filesystem_free_threshold': filesystem_free_threshold | default(10)
+                }
+              ],
+              'details': details | default(false)
+            }
+          }
         )
       }}
-  vars:
-    checks:
-      - name: filesystem_status_summary
 
 - name: Filesystem health checks
   ansible.builtin.debug:
     var: health_checks
-  failed_when: "'FAIL' == health_checks.status"
+  failed_when: "'FAIL' == health_checks.result"

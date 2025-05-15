@@ -4,7 +4,9 @@
     "name": "power_status",
     "getval": "(?m)^(No power info, as no System Controller Module\\(.*\\) is online\\.)",
     "result": {
-      "power": "{{ _0 }}"
+      "power": {
+        "status": "NotSupported"
+      }
     }
   },
   {
@@ -12,7 +14,8 @@
     "getval": "(?m)^Fan Zone Speed:\\s*(?P<zone_speed>.+)$",
     "result": {
       "fans": {
-         "zone_speed": "{{ zone_speed | trim }}"
+        "status": "OK",
+        "zone_speed": "{{ zone_speed | trim }}"
       }
     }
   },
@@ -21,7 +24,16 @@
     "getval": "(?m)^Fan Air Filter\\s*:\\s*(?P<air_filter>.+)$",
     "result": {
       "fans": {
-         "air_filter": "{{ air_filter | trim }}"
+        "air_filter": "{{ air_filter | trim }}"
+      }
+    }
+  },
+  {
+    "name": "temperature",
+    "getval": "(?m)^Temperature:\\s*(?P<current_temp>\\d+)",
+    "result": {
+      "temperature": {
+        "current_temp": "{{ current_temp | int }}"
       }
     }
   }

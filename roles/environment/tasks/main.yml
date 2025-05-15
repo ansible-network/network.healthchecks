@@ -14,16 +14,15 @@
     health_checks: >-
       {{
         env_health | network.healthchecks.health_check_view(
-          checks,
+          [{
+            'name': 'environment_minimum_threshold',
+            'environment_temp_threshold': environment_temp_threshold | default(40)
+          }],
           details=details | default(false)
         )
       }}
-  vars:
-    checks:
-      - name: "environment minimum threshold"
-        environment_temp_threshold: "{{ environment_temp_threshold | default(40) }}"
 
 - name: Environment health checks
   ansible.builtin.debug:
     var: health_checks
-  failed_when: "'FAIL' == health_checks.status"
+  failed_when: "'FAIL' == health_checks.result"

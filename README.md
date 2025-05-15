@@ -8,43 +8,23 @@
 - The collection includes capabilities for performing network device health, detecting failures, and recommending proactive maintenance.
 - Designed for **network administrators, automation engineers, and IT professionals**, this collection enhances **network visibility, operational monitoring, and configuration validation**.
 
-## Requirements
-- [Requires Ansible](https://github.com/redhat-cop/network.healthchecks/blob/main/meta/runtime.yml)
-- [Requires Content Collections](https://github.com/redhat-cop/network.healthchecks/blob/main/galaxy.yml)
-- [Testing Requirements](https://github.com/redhat-cop/network.healthchecks/blob/main/test-requirements.txt)
-- Users need to include platform-specific collections as per their requirements:
-  - [arista.eos](https://github.com/ansible-collections/arista.eos)
-  - [cisco.ios](https://github.com/ansible-collections/cisco.ios)
-  - [cisco.iosxr](https://github.com/ansible-collections/cisco.iosxr)
-  - [cisco.nxos](https://github.com/ansible-collections/cisco.nxos)
+### Roles
 
-## Installation
+The collection includes the following roles:
 
-To consume this **Validated Content** from **Automation Hub**, add the following to your `ansible.cfg`:
-
-```
-[galaxy]
-server_list = automation_hub
-
-[galaxy_server.automation_hub]
-url=https://console.redhat.com/api/automation-hub/content/validated/
-auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
-token=<SuperSecretToken>
-```
-
-Utilize the current Token, and if the token has expired, obtain the necessary
-token from the [Automation Hub Web UI](https://console.redhat.com/ansible/automation-hub/token).
-
-With this configured, simply run the following commands:
-
-```
-ansible-galaxy collection install network.healthchecks
-ansible-galaxy collection install network.bgp
-```
-
-## Roles
-
-The collection includes the following roles for network device health monitoring:
+<!--start collection content-->
+Name | Description
+--- | ---
+[network.healthchecks.bgp](roles/bgp/README.md) | Monitor BGP neighbor states and session status to ensure proper routing protocol operation.
+[network.healthchecks.cpu](roles/cpu/README.md) | Monitor CPU usage to detect excessive CPU consumption and ensure device stability.
+[network.healthchecks.memory](roles/memory/README.md) | Monitor memory usage to detect excessive memory consumption and ensure device stability.
+[network.healthchecks.uptime](roles/uptime/README.md) | Monitor system uptime to detect system stability and identify devices needing maintenance.
+[network.healthchecks.environment](roles/environment/README.md) | Monitor environmental factors like temperature and power supply to prevent hardware failures.
+[network.healthchecks.filesystem](roles/filesystem/README.md) | Ensure sufficient disk space and check for file system errors that may affect operations.
+[network.healthchecks.crashfiles](roles/crashfiles/README.md) | Monitor crash files to detect system crashes and stability issues.
+[network.healthchecks.interfaces](roles/interfaces/README.md) | Monitor interface states and operational status to ensure proper network connectivity.
+[network.healthchecks.ospf](roles/ospf/README.md) | Monitor OSPF neighbor states and session status to ensure proper routing protocol operation.
+<!--end collection content-->
 
 ### BGP Health Check
 The `network.healthchecks.bgp` role monitors BGP neighbor states and session status to ensure proper routing protocol operation and network connectivity.
@@ -91,333 +71,38 @@ The `network.healthchecks.ospf` role monitors OSPF neighbor states and session s
 
 For detailed documentation, features, and examples, see the [OSPF Health Check README](roles/ospf/README.md).
 
-## Health Check Status Formats
+## Requirements
+- [Requires Ansible](https://github.com/redhat-cop/network.healthchecks/blob/main/meta/runtime.yml)
+- [Requires Content Collections](https://github.com/redhat-cop/network.healthchecks/blob/main/galaxy.yml)
+- [Testing Requirements](https://github.com/redhat-cop/network.healthchecks/blob/main/test-requirements.txt)
+- Users need to include platform-specific collections as per their requirements:
+  - [arista.eos](https://github.com/ansible-collections/arista.eos)
+  - [cisco.ios](https://github.com/ansible-collections/cisco.ios)
+  - [cisco.iosxr](https://github.com/ansible-collections/cisco.iosxr)
+  - [cisco.nxos](https://github.com/ansible-collections/cisco.nxos)
 
-Each role provides a standardized health check output format. Here's a summary of the status formats for each role:
+## Installation
 
-### BGP Health Check Status
-Monitors BGP neighbor states and session status, checking for minimum required up neighbors and overall BGP health.
+To consume this **Validated Content** from **Automation Hub**, add the following to your `ansible.cfg`:
 
-```json
-{
-    "health_checks": {
-        "all_neighbors_down": {
-            "check_status": "PASS",
-            "details": {
-                "neighbors": [
-                    {
-                        "peer": "192.0.2.2",
-                        "peer_as": 65002,
-                        "state": "Idle",
-                        "up_down": "never",
-                        "version": 4
-                    }
-                ]
-            },
-            "down": 1,
-            "total": 1,
-            "up": 0
-        },
-        "all_neighbors_up": {
-            "check_status": "FAIL",
-            "details": {
-                "neighbors": [
-                    {
-                        "peer": "192.0.2.2",
-                        "peer_as": 65002,
-                        "state": "Idle",
-                        "up_down": "never",
-                        "version": 4
-                    }
-                ]
-            },
-            "down": 1,
-            "total": 1,
-            "up": 0
-        },
-        "min_neighbors_up": {
-            "check_status": "FAIL",
-            "details": {
-                "neighbors": [
-                    {
-                        "peer": "192.0.2.2",
-                        "peer_as": 65002,
-                        "state": "Idle",
-                        "up_down": "never",
-                        "version": 4
-                    }
-                ]
-            },
-            "down": 1,
-            "total": 1,
-            "up": 0
-        },
-        "status": "FAIL"
-    }
-}
+```
+[galaxy]
+server_list = automation_hub
+
+[galaxy_server.automation_hub]
+url=https://console.redhat.com/api/automation-hub/content/validated/
+auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+token=<SuperSecretToken>
 ```
 
-### CPU Health Check Status
-Tracks CPU utilization with 1-minute and 5-minute averages against a configurable threshold.
+Utilize the current Token, and if the token has expired, obtain the necessary
+token from the [Automation Hub Web UI](https://console.redhat.com/ansible/automation-hub/token).
 
-```json
-{
-    "health_checks": {
-        "cpu": {
-            "check_status": "PASS",
-            "1_min_avg": 0,
-            "5_min_avg": 0,
-            "threshold": 80
-        },
-        "status": "PASS"
-    }
-}
+With this configured, simply run the following commands:
+
 ```
-
-### Memory Health Check Status
-Monitors memory utilization percentage against a configurable threshold to prevent memory exhaustion.
-
-```json
-{
-    "health_checks": {
-        "memory": {
-            "check_status": "PASS",
-            "memory_utilization": 65,
-            "threshold": 80
-        },
-        "status": "PASS"
-    }
-}
-```
-
-### Uptime Health Check Status
-Tracks system uptime duration and compares it against a minimum required uptime threshold.
-
-```json
-{
-    "health_checks": {
-        "uptime": {
-            "check_status": "PASS",
-            "current_uptime": 5760,
-            "min_uptime": 1440
-        },
-        "uptime_status_summary": {
-            "weeks": 3,
-            "days": 3,
-            "hours": 22,
-            "minutes": 36
-        },
-        "status": "PASS"
-    }
-}
-```
-
-### Environment Health Check Status
-Monitors environmental conditions including temperature, fan status, and power supply health.
-
-```json
-{
-    "health_checks": {
-        "environment": {
-            "check_status": "FAIL",
-            "temperature": {
-                "current_temp": 45,
-                "threshold": 40
-            },
-            "fans": {
-                "status": "NotSupported",
-                "zone_speed": "Zone 1: 0x0"
-            },
-            "power": {
-                "status": "OK"
-            }
-        },
-        "status": "FAIL"
-    }
-}
-```
-
-### Filesystem Health Check Status
-Tracks filesystem usage, free space percentage, and compares against a configurable threshold.
-
-```json
-{
-    "health_checks": {
-        "filesystem": {
-            "check_status": "PASS",
-            "free_percent": 93.42,
-            "threshold": 10,
-            "total": 2001584128,
-            "free": 1869959168
-        },
-        "status": "PASS"
-    }
-}
-```
-
-### Crash Files Health Check Status
-Monitors for the presence of crash files and provides a summary of any detected system crashes.
-
-```json
-{
-    "health_checks": {
-        "crash_files": {
-            "check_status": "PASS",
-            "total_crash_files": 0
-        },
-        "crash_files_summary": {
-            "total_crash_files": 0,
-            "crash_files": []
-        },
-        "status": "PASS"
-    }
-}
-```
-
-### Interfaces Health Check Status
-Monitors interface states (administrative and operational) and provides detailed interface status information.
-
-```json
-{
-    "health_checks": {
-        "all_admin_state_up": {
-            "check_status": "FAIL",
-            "interfaces_status_summery": {
-                "admin_down": 1,
-                "admin_up": 5,
-                "down": 1,
-                "total": 6,
-                "up": 5
-            }
-        },
-        "all_operational_state_up": {
-            "check_status": "FAIL",
-            "interfaces_status_summery": {
-                "admin_down": 1,
-                "admin_up": 5,
-                "down": 1,
-                "total": 6,
-                "up": 5
-            }
-        },
-        "detailed_interface_status_summery": {
-            "interfaces": {
-                "GigabitEthernet1": {
-                    "admin": "up",
-                    "name": "GigabitEthernet1",
-                    "operational": "up"
-                },
-                "GigabitEthernet2": {
-                    "admin": "up",
-                    "name": "GigabitEthernet2",
-                    "operational": "up"
-                },
-                "GigabitEthernet3": {
-                    "admin": "up",
-                    "name": "GigabitEthernet3",
-                    "operational": "up"
-                },
-                "GigabitEthernet4": {
-                    "admin": "down",
-                    "name": "GigabitEthernet4",
-                    "operational": "down"
-                },
-                "Loopback888": {
-                    "admin": "up",
-                    "name": "Loopback888",
-                    "operational": "up"
-                },
-                "Loopback999": {
-                    "admin": "up",
-                    "name": "Loopback999",
-                    "operational": "up"
-                }
-            }
-        },
-        "min_admin_state_up": {
-            "check_status": "PASS",
-            "interfaces_status_summery": {
-                "admin_down": 1,
-                "admin_up": 5,
-                "down": 1,
-                "total": 6,
-                "up": 5
-            }
-        },
-        "min_operational_state_up": {
-            "check_status": "PASS",
-            "interfaces_status_summery": {
-                "admin_down": 1,
-                "admin_up": 5,
-                "down": 1,
-                "total": 6,
-                "up": 5
-            }
-        },
-        "status": "FAIL"
-    }
-}
-```
-
-### OSPF Health Check Status
-Monitors OSPF neighbor states and session status, checking for minimum required up neighbors and overall OSPF health.
-
-```json
-{
-    "ansible_facts": {
-        "health_checks": {
-            "all_neighbors_down": {
-                "check_status": "FAIL",
-                "details": {
-                    "neighbors": [
-                        {
-                            "address": "10.1.1.2",
-                            "area": "0.0.0.0",
-                            "interface": "GigabitEthernet1",
-                            "state": "FULL/BDR"
-                        }
-                    ]
-                },
-                "down": 0,
-                "total": 1,
-                "up": 1
-            },
-            "all_neighbors_up": {
-                "check_status": "PASS",
-                "details": {
-                    "neighbors": [
-                        {
-                            "address": "10.1.1.2",
-                            "area": "0.0.0.0",
-                            "interface": "GigabitEthernet1",
-                            "state": "FULL/BDR"
-                        }
-                    ]
-                },
-                "down": 0,
-                "total": 1,
-                "up": 1
-            },
-            "min_neighbors_up": {
-                "check_status": "PASS",
-                "details": {
-                    "neighbors": [
-                        {
-                            "address": "10.1.1.2",
-                            "area": "0.0.0.0",
-                            "interface": "GigabitEthernet1",
-                            "state": "FULL/BDR"
-                        }
-                    ]
-                },
-                "down": 0,
-                "total": 1,
-                "up": 1
-            },
-            "status": "PASS"
-        }
-    },
-}
+ansible-galaxy collection install network.healthchecks
+ansible-galaxy collection install network.bgp
 ```
 
 ## Testing

@@ -16,7 +16,7 @@
   ansible.builtin.debug:
     msg: "Filesystem Health Check Result: {{ fs_result }}"
 
-- name: Assert result has not changed
+- name: Assert that the health check data is correctly generated
   ansible.builtin.assert:
     that:
       - fs_result.changed == false

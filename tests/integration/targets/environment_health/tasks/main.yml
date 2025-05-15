@@ -23,6 +23,12 @@
     that:
       - env_result.changed == false
 
+- name: Assert that the health check data is correctly generated
+  ansible.builtin.assert:
+    that:
+      - env_result.environment.status == "PASS"
+      - env_result.environment.details.environment.status == "PASS"
+
 - name: Ending Environment health check integration tests
   ansible.builtin.debug:
     msg: "END network.healthchecks.environment health check integration tests on connection={{ ansible_connection }}"

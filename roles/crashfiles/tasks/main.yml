@@ -1,5 +1,5 @@
 ---
-- name: Include validation tasks (ensures platform is supported)
+- name: Include validation tasks (ensure target platform is supported)
   ansible.builtin.include_tasks: validation.yml
 
 - name: Include OS-specific Crash Files tasks {{ ansible_network_os.split('.')[2] }}
@@ -14,16 +14,15 @@
     health_checks: >-
       {{
         crash_health | network.healthchecks.health_check_view(
-          checks,
+          [{
+            'name': 'crash_files',
+            'ignore_errors': ignore_errors | default(false)
+          }],
           details=details | default(false)
         )
       }}
-  vars:
-    checks:
-      - name: crash_files
-      - name: crash_files_summary
 
 - name: Crash Files health checks
   ansible.builtin.debug:
     var: health_checks
-  failed_when: "'FAIL' == health_checks.status"
+  failed_when: "'FAIL' == health_checks.result"
