@@ -404,13 +404,13 @@ def interfaces_health_check_view(*args, **kwargs):
                     health_checks.update({"result": "FAIL" if status == "unsuccessful" else "PASS"})
         else:
             health_checks = health_facts
-            
+
     if details:
         health_checks.update({"detailed_interface_status_summery": detailed_health_facts})
-        
+
     if "result" not in health_checks:
         health_checks['result'] = "PASS"
-        
+
     return health_checks
 
 
@@ -418,7 +418,7 @@ def process_stats(option, health_facts, checks):
     opr = is_present(checks, option)
     status = None
     int_dict = {}
-    
+
     if opr:
         if option == "all_admin_state_up":
             check_status = get_admin_status(health_facts, "admin_up")
@@ -428,13 +428,13 @@ def process_stats(option, health_facts, checks):
             check_status = get_admin_status(health_facts, "min", opr["min_count"])
         else:
             check_status = get_status(health_facts, "up")
-            
+
         int_dict = {"status": "PASS" if check_status == "successful" else "FAIL"}
         int_dict.update({"interfaces_status_summery": health_facts})
-        
+
         if check_status == "unsuccessful" and not opr.get("ignore_errors"):
             status = 'unsuccessful'
-            
+
     return option, int_dict, status
 
 

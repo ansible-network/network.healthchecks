@@ -9,15 +9,21 @@
   ansible.builtin.debug:
     var: cpu_health
 
+- name: Set CPU thresholds and details
+  ansible.builtin.set_fact:
+    details: "{{ cpu_utilization.details | default(false) }}"
+    warning_threshold: "{{ cpu_utilization.warning_threshold | default(cpu_warning_threshold) }}"
+    critical_threshold: "{{ cpu_utilization.critical_threshold | default(cpu_critical_threshold) }}"
+
 - name: Set health checks fact
   ansible.builtin.set_fact:
     health_checks: >-
       {{
         cpu_health | network.healthchecks.health_check_view(
           checks,
-          details=details | default(false),
-          warning_threshold=warning_threshold | default(cpu_warning_threshold),
-          critical_threshold=critical_threshold | default(cpu_critical_threshold)
+          details=details,
+          warning_threshold=warning_threshold,
+          critical_threshold=critical_threshold
         )
       }}
   vars:
