@@ -21,45 +21,6 @@
         that:
           - default_result.changed == false
 
-    # # Test Case 2: Custom thresholds (warning: 85, critical: 95)
-    # - name: Run network.cpu with custom thresholds
-    #   ansible.builtin.include_role:
-    #     name: network.healthchecks.cpu
-    #   vars:
-    #     cpu_utilization:
-    #       details: true
-    #       warning_threshold: 80
-    #       critical_threshold: 95
-    #   register: custom_result
-
-    # - name: Assert custom threshold result
-    #   ansible.builtin.assert:
-    #     that:
-    #       - custom_result.changed == false
-    #       - custom_result.healthchecks.cpu_utilization.status == "FAIL"
-    #       - custom_result.healthchecks.cpu_utilization.details.cpu_utilization.status == "FAIL"
-    #       - custom_result.healthchecks.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
-
-    # # Test Case 3: Very low thresholds (warning: 0, critical: 0)
-    # - name: Run network.cpu with very low thresholds
-    #   ansible.builtin.include_role:
-    #     name: network.healthchecks.cpu
-    #   vars:
-    #     cpu_utilization:
-    #       details: true
-    #       warning_threshold: 0
-    #       critical_threshold: 0
-    #   register: low_threshold_result
-
-    # - name: Assert low threshold result
-    #   ansible.builtin.assert:
-    #     that:
-    #       - low_threshold_result.changed == false
-    #       - low_threshold_result.healthchecks.cpu_utilization.status == "FAIL"
-    #       - low_threshold_result.healthchecks.cpu_utilization.details.cpu_utilization.status == "FAIL"
-    #       - low_threshold_result.healthchecks.cpu_utilization.details.cpu_utilization.message == "CPU utilization is above the critical threshold"
-
-
 - name: Debug
   ansible.builtin.debug:
     msg: "END network.cpu health_check operation integration tests on connection={{ ansible_connection }}"
