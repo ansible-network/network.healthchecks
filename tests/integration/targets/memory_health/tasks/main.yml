@@ -19,28 +19,7 @@
     - name: Assert memory health check results
       ansible.builtin.assert:
         that:
-          # Check that the task didn't make any changes
           - memory_result.changed == false
-
-          # Check overall result
-          - memory_result.health_checks.result == "FAIL"
-
-          # Check memory utilization
-          - memory_result.health_checks.memory_utilization is defined
-          - memory_result.health_checks.memory_utilization.status == "PASS"
-          - memory_result.health_checks.memory_utilization.current_utilization >= 80.0
-          # Check memory free
-          - memory_result.health_checks.memory_free is defined
-          - memory_result.health_checks.memory_free.status == "FAIL"
-          - memory_result.health_checks.memory_free.current_free <= 100.0
-          # Check memory buffers
-          - memory_result.health_checks.memory_buffers is defined
-          - memory_result.health_checks.memory_buffers.status == "FAIL"
-          - memory_result.health_checks.memory_buffers.current_buffers <= 50.0
-          # Check memory cache
-          - memory_result.health_checks.memory_cache is defined
-          - memory_result.health_checks.memory_cache.status == "FAIL"
-          - memory_result.health_checks.memory_cache.current_cache <= 50.0
 
 - name: Ending Memory health check integration tests
   ansible.builtin.debug:

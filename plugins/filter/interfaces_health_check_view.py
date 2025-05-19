@@ -37,8 +37,7 @@ EXAMPLES = r"""
                 - name: min_admin_state_up
                   min_count: 1
 
-# TASK [network.interfaces.run : INTERFACES health checks] ***********************
-# task path: /Users/amhatre/ansible-collections/collections/ansible_collections/network/interfaces/roles/run/tasks/includes/health_check.yaml:10
+# TASK [INTERFACES health checks] ***********************
 # ok: [10.0.150.231] => {
 #     "health_checks": {
 #         "all_admin_state_up": {
@@ -114,7 +113,7 @@ EXAMPLES = r"""
                   ignore_errors: true
                   min_count: 1
 
-# TASK [network.interfaces.run : INTERFACES health checks] *************************************************************
+# TASK [INTERFACES health checks] *************************************************************
 # ok: [10.0.150.115] => {
 #     "failed_when_result": false,
 #     "health_checks": {
@@ -235,7 +234,7 @@ EXAMPLES = r"""
                   ignore_errors: true
                   min_count: 1
 #
-# TASK [network.interfaces.run : INTERFACES health checks] *************************************************************
+# TASK [INTERFACES health checks] *************************************************************
 # fatal: [10.0.150.115]: FAILED! => {
 #     "failed_when_result": true,
 #     "health_checks": {
