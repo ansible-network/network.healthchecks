@@ -1,3 +1,8 @@
 ---
 # defaults file for network.healthchecks.memory
 memory_free_threshold: 20
+memory_warning_threshold: 80
+memory_critical_threshold: 90
+memory_min_free_mb: 100
+memory_min_buffers_mb: 50
+memory_min_cache_mb: 50

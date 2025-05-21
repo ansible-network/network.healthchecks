@@ -12,10 +12,11 @@ filesystem_free_threshold: 10
 environment_temp_threshold: 40
 
 # Memory thresholds
-memory_utilization_threshold: 80
-memory_min_free: 100
-memory_min_buffers: 50
-memory_min_cache: 50
+memory_warning_threshold: 85
+memory_critical_threshold: 90
+min_free_memory_mb: 100
+min_buffers_mb: 50
+min_cache_mb: 50
 
 # Uptime thresholds
 uptime_warning_below_threshold: 1440

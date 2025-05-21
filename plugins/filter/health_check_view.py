@@ -92,8 +92,8 @@ def health_check_view(*args, **kwargs):
 
     health_facts = data["health_facts"] or {}
     # Use passed thresholds or fall back to defaults
-    threshold = kwargs.get('threshold', health_facts.get('cpu_threshold', DEFAULT_VALUES.get('cpu_threshold', 80)))
-    critical_threshold = kwargs.get('critical_threshold', health_facts.get('cpu_critical_threshold', DEFAULT_VALUES.get('cpu_critical_threshold', 90)))
+    threshold = int(kwargs.get('warning_threshold', health_facts.get('cpu_warning_threshold', DEFAULT_VALUES.get('cpu_warning_threshold'))))
+    critical_threshold = int(kwargs.get('critical_threshold', health_facts.get('cpu_critical_threshold', DEFAULT_VALUES.get('cpu_critical_threshold'))))
 
     target = data["target"]
     health_checks = {}
@@ -143,22 +143,22 @@ def health_check_view(*args, **kwargs):
             # Handle NX-OS CPU structure
             if 'cpu_usage' in health_facts and isinstance(health_facts['cpu_usage'], dict):
                 cpu_usage = health_facts['cpu_usage']
-                current_util = cpu_usage.get('five_minute', 0)
+                current_util = int(cpu_usage.get('five_minute', 0))
 
             # Handle IOS-XR CPU structure
             elif 'cpu' in health_facts and isinstance(health_facts['cpu'], dict):
                 cpu = health_facts['cpu']
-                current_util = cpu.get('5_min_avg', 0)
+                current_util = int(cpu.get('5_min_avg', 0))
 
             # Handle IOS CPU structure
             elif 'global' in health_facts:
                 cpu_summary = health_facts.get('global', {})
-                current_util = cpu_summary.get('five_minute', 0)
+                current_util = int(cpu_summary.get('five_minute', 0))
 
             # Handle NX-OS raw CPU data
             elif 'processes' in health_facts and isinstance(health_facts['processes'], dict):
                 processes = health_facts['processes']
-                current_util = processes.get('five_minute', 0)
+                current_util = int(processes.get('five_minute', 0))
 
             else:
                 current_util = 0

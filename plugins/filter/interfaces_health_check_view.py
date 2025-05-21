@@ -37,8 +37,7 @@ EXAMPLES = r"""
                 - name: min_admin_state_up
                   min_count: 1
 
-# TASK [network.interfaces.run : INTERFACES health checks] ***********************
-# task path: /Users/amhatre/ansible-collections/collections/ansible_collections/network/interfaces/roles/run/tasks/includes/health_check.yaml:10
+# TASK [INTERFACES health checks] ***********************
 # ok: [10.0.150.231] => {
 #     "health_checks": {
 #         "all_admin_state_up": {
@@ -114,7 +113,7 @@ EXAMPLES = r"""
                   ignore_errors: true
                   min_count: 1
 
-# TASK [network.interfaces.run : INTERFACES health checks] *************************************************************
+# TASK [INTERFACES health checks] *************************************************************
 # ok: [10.0.150.115] => {
 #     "failed_when_result": false,
 #     "health_checks": {
@@ -235,7 +234,7 @@ EXAMPLES = r"""
                   ignore_errors: true
                   min_count: 1
 #
-# TASK [network.interfaces.run : INTERFACES health checks] *************************************************************
+# TASK [INTERFACES health checks] *************************************************************
 # fatal: [10.0.150.115]: FAILED! => {
 #     "failed_when_result": true,
 #     "health_checks": {
@@ -404,13 +403,13 @@ def interfaces_health_check_view(*args, **kwargs):
                     health_checks.update({"result": "FAIL" if status == "unsuccessful" else "PASS"})
         else:
             health_checks = health_facts
-            
+
     if details:
         health_checks.update({"detailed_interface_status_summery": detailed_health_facts})
-        
+
     if "result" not in health_checks:
         health_checks['result'] = "PASS"
-        
+
     return health_checks
 
 
@@ -418,7 +417,7 @@ def process_stats(option, health_facts, checks):
     opr = is_present(checks, option)
     status = None
     int_dict = {}
-    
+
     if opr:
         if option == "all_admin_state_up":
             check_status = get_admin_status(health_facts, "admin_up")
@@ -428,13 +427,13 @@ def process_stats(option, health_facts, checks):
             check_status = get_admin_status(health_facts, "min", opr["min_count"])
         else:
             check_status = get_status(health_facts, "up")
-            
+
         int_dict = {"status": "PASS" if check_status == "successful" else "FAIL"}
         int_dict.update({"interfaces_status_summery": health_facts})
-        
+
         if check_status == "unsuccessful" and not opr.get("ignore_errors"):
             status = 'unsuccessful'
-            
+
     return option, int_dict, status
 
 
