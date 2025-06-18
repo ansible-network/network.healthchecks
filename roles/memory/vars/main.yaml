@@ -1,4 +1,4 @@
 memory_threshold: 80
-min_free_memory: 100
-min_buffers: 50
-min_cache: 50
+memory_min_free_memory: 100
+memory_min_buffers: 50
+memory_min_cache: 50

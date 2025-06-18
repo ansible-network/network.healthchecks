@@ -112,9 +112,10 @@ def filesystem_health_check_view(*args, **kwargs):
 
     return health_checks
 
+
 class FilterModule(object):
     """filesystem_health_check_view"""
 
     def filters(self):
         """a mapping of filter names to functions"""
-        return {"filesystem_health_check_view": filesystem_health_check_view} 
+        return {"filesystem_health_check_view": filesystem_health_check_view}

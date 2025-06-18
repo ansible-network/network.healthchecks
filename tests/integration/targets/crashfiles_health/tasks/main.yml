@@ -15,7 +15,7 @@
         cores:
           - /var/core
           - /var/crash
-        ignore_errors: true
+        # ignore_errors: true
         details: true
       register: crash_result
 

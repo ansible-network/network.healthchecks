@@ -1,6 +1,6 @@
 # Ansible Network Health Checks
 <!-- [![CI](https://github.com/redhat-cop/network.healthchecks/actions/workflows/tests.yml/badge.svg?event=schedule)](https://github.com/redhat-cop/network.healthchecks/actions/workflows/tests.yml) -->
-<!-- [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7661/badge)](https://bestpractices.coreinfrastructure.org/projects/7661) -->
+<!-- [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/10756/badge)](https://bestpractices.coreinfrastructure.org/projects/10756) -->
 
 ## About
 
