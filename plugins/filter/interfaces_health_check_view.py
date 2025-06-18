@@ -382,20 +382,17 @@ def interfaces_health_check_view(*args, **kwargs):
     health_facts = data["health_facts"]
     detailed_health_facts = health_facts
     target = data["target"]
-    
     if "interfaces" in health_facts:
         health_facts = _process_health_facts(health_facts["interfaces"])
 
     health_checks = {}
     details = None
-    
     if target["name"] == "health_check":
         h_vars = target.get("vars")
         if h_vars:
             checks = h_vars.get("checks")
             details = h_vars.get("details")
-            for check_type in ["all_operational_state_up", "all_admin_state_up", 
-                             "min_operational_state_up", "min_admin_state_up"]:
+            for check_type in ["all_operational_state_up", "all_admin_state_up", "min_operational_state_up", "min_admin_state_up"]:
                 option, int_dict, status = process_stats(check_type, health_facts, checks)
                 if int_dict:
                     health_checks.update({option: int_dict})
