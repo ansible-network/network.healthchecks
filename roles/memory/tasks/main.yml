@@ -31,4 +31,3 @@
   ansible.builtin.debug:
     var: health_checks
   failed_when: "'FAIL' == health_checks.result"
-

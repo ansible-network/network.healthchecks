@@ -1,4 +1,4 @@
 ---
 cpu_threshold: 80
-warning_threshold: 85
-critical_threshold: 95
+cpu_warning_threshold: 85
+cpu_critical_threshold: 95

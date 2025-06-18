@@ -8,7 +8,7 @@ dependencies:
   "ansible.scm": ">=2.0.0"
 license_file: LICENSE
 name: healthchecks
-description: Ansible Network Healthchecks collection enables users to perform various network health checks and monitoring tasks across different network platforms.
+description: Ansible Network Healthchecks collection enable users to perform various network health checks and monitor tasks across different network platforms.
 namespace: network
 readme: README.md
 repository: https://github.com/redhat-cop/network.healthchecks
