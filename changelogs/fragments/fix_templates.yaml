@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Moves the templates to the same directory as tasks and other files.
